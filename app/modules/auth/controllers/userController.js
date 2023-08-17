@@ -9,6 +9,12 @@ var masters = require(process.cwd() + '/models/api/masters');
 var multer  =   require('multer'); 
 //var location = require(process.cwd()+'/upload/');
 var moment = require('moment');
+//const uuidv4 = require('uuid/v4');
+const fs = require('fs');
+var pdf = require('html-pdf');
+var path = require('path');
+var pug = require('pug');
+var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
 var storage =   multer.diskStorage({  
   destination: function (req, file, callback) {  
     callback(null, './uploads');  
@@ -277,7 +283,6 @@ module.exports = {
     
     },
     getuserbyId:async function(req,res){
-      
       var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       var column = ['id','fname','lname','mobileNo','email','company_name','usertype','password','status','deletestatus','createdby','createddate','upadtedby','updateddate'];
       let checkId = await masters.getSingleRecord('users',column, {id:id});
@@ -302,29 +307,16 @@ module.exports = {
         var where = {};
         where['status'] = '1';
         var orderby = 'createddate DESC';
-        var columns = ['id as value','name as label'];
+        var columns = ['id','name','status'];
         var response = await masters.get_definecol_bytbl_cond_sorting(columns,'modules', where, orderby );
         finalData.data = response; 
-        console.log(response)
-        return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
-      },
-      rolelistingdata: async function(req,res){
-        var finalData = {};
-        var where = {};
-        where['status'] = '1';
-        var orderby = 'createddate DESC';
-        var columns = ['id as value','name as label'];
-        var response = await masters.get_definecol_bytbl_cond_sorting(columns,'roles', where, orderby );
-        finalData.data = response; 
-        console.log(response)
-        return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
+        return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
       },
       addpermission: async function(req,res){
         var roleid = req.body.data.roleid;
-        
         var moduleid = req.body.data.moduleid;
-        var addedit = req.body.data.addedit == true ?1:0;
-        var view = req.body.data.view==true?1:0;
+        var addedit = req.body.data.addedit;
+        var view = req.body.data.view;
         var deleteflag = req.body.data.deleteflag;
         let checkId = await masters.check_exist('permission', {roleid:roleid,moduleid:moduleid,status:'1',deletestatus:0});
          if(checkId){
@@ -406,6 +398,7 @@ module.exports = {
       var columns = ['permission.id','permission.roleid','permission.moduleid','permission.addedit','permission.view','permission.deleteflag','permission.status','roles.name as rolename','modules.name as modulesname'];
       var limit_arr = { 'limit': 10, 'offset': 1 };
       var result = await apiModel.get_joins_records('permission', columns, joins, where, orderby, extra_whr, limit_arr);
+      
       return res.status(200).json({ status: true, message: 'Permisssion List fetched successfully', data: result, statusCode: 200});
   
       },
@@ -441,5 +434,49 @@ module.exports = {
             return res.status(400).json({ status: false, message: ' details not found'});
           }
       },
+      downloadpdf:async function(req,res){
+        var final_data = {};
+        // CREATE PDF FILE
+        var id=1;
+      const baseUrl = __appBaseUrl;
+      var column = ['id','description'];
+      let checkId = await masters.getSingleRecord('default_files',column, {id:id});
+      //const fileName = 'report-' + uuidv4() + '-'+ Date.now() + '.pdf';
+      const fileName = Date.now()+".pdf"
+      const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
+      
+      const rootPath = path.resolve("./");
+      const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
+        baseUrl: baseUrl,
+        data: checkId
+      });
 
+      var html = htmlData;
+      var options = { format: 'A4', orientation: "portrait" };
+       
+      pdf.create(html, options).toFile(pdfPath, function(err, response) {
+        if (err) return console.log(err);
+        //console.log(response);
+        //res.redirect('/api/user/downloadPdfFile/'+fileName);
+        const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
+        final_data.url = downloadLink;
+        return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+      });
+       // return res.status(400).json({ status: false, message: ' details not found'});
+      },
+      downloadPdfFile: async function(req, res) {
+        const fileName = req.params.fileName;
+       // console.log(fileName);
+         //const filePath = __uploadDir+'/reports/pdf/'+fileName;
+       //  const fileName = "test.pdf"
+      const filePath = __uploadDir+'/reports/pdf/'+fileName;
+        var status = await fileHelper.download_any_file(filePath, req, res, false);
+       
+        //SHOW IN BROWSER
+       // var status = await fileHelper.show_pdf_file_browser(filePath, req, res, true);
+
+        if(status == false) {
+            return res.status(200).send('Error: no such file or directory')
+        }
+    },
 };

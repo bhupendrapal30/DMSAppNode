@@ -13,9 +13,15 @@ module.exports = {
                        var result = await masters.get_definecol_bytbl_cond(['id','fname','lname','mobileNo','email','usertype','status','password'], 'users', { mobileNo: mobileNo, status: 1 ,password:password});
                        if(result.length > 0 && result[0].password===password){
                         var usertype = result[0].usertype;
-                        var userData= {
-                            id: result
-                        }
+                var userData= {
+                    id: result[0].id,
+                    fname:result[0].fname,
+                    lname : result[0].lname,
+                    mobileNo : result[0].mobileNo,
+                    email : result[0].email,
+                    usertyple : usertype,
+                    status: result[0].status
+                }
                 var token = jwt.sign(userData, env.secretKey, {
                     expiresIn: 86400 // expires in 24 hours
                 });
@@ -30,7 +36,7 @@ module.exports = {
                         condition: ['permission.moduleid', '=', 'modules.id'],
                         jointype: 'LEFT'
                     }
-                  ];
+      s            ];
                   var orderby = 'permission.createddate DESC';
                   var where = {'permission.status':1,'roleid':usertype};
                   var extra_whr = '';
@@ -39,7 +45,7 @@ module.exports = {
                  // var limit_arr = { 'limit': 10, 'offset': 1 };
                  var limit_arr = {}
                   var result1 = await apiModel.get_joins_records('permission', columns, joins, where, orderby, extra_whr, limit_arr);
-                    userData.id[0].per=result1;
+                
                   
                 res.status(200).json({status: true, message: 'records successfully fetched', data: token, userData:userData,permissionlist:result1});
             }
