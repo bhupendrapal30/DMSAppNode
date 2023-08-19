@@ -36,7 +36,7 @@ module.exports = {
                         condition: ['permission.moduleid', '=', 'modules.id'],
                         jointype: 'LEFT'
                     }
-      s            ];
+                  ];
                   var orderby = 'permission.createddate DESC';
                   var where = {'permission.status':1,'roleid':usertype};
                   var extra_whr = '';
