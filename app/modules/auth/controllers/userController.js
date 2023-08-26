@@ -11,11 +11,11 @@ var multer  =   require('multer');
 var moment = require('moment');
 //const uuidv4 = require('uuid/v4');
 const fs = require('fs');
-//var pdf = require('html-pdf');
+var pdf = require('html-pdf');
 var path = require('path');
 var pug = require('pug');
 var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
-var pdf = require("pdf-creator-node");
+//var pdf = require("pdf-creator-node");
 var storage =   multer.diskStorage({  
   destination: function (req, file, callback) {  
     callback(null, './uploads');  
@@ -482,7 +482,7 @@ module.exports = {
         data: checkId
       });
 
-      
+
       var html = htmlData;
       var options = { format: 'A4', orientation: "portrait" };
        
