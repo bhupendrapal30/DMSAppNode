@@ -434,64 +434,64 @@ module.exports = {
             return res.status(400).json({ status: false, message: ' details not found'});
           }
       },
+    //   downloadpdf:async function(req,res){
+    //     var html = fs.readFileSync(process.cwd()+'/app/views/templete.pug', 'utf8');
+    //     var options = { format: 'A4', orientation: "portrait" };
+    //     var users = [
+    //       {
+    //           name:"Shyam",
+    //           age:"26"
+    //       },
+    //       {
+    //           name:"Navjot",
+    //           age:"26"
+    //       },
+    //       {
+    //           name:"Vitthal",
+    //           age:"26"
+    //       }
+    //   ]
+    //   var document = {
+    //       html: html,
+    //       data: {
+    //           users: users
+    //       },
+    //       path: "./output.pdf"
+    //   };
+    //   pdf.create(document, options)
+    // .then(res => {
+    //     console.log(res)
+    // })
+    // .catch(error => {
+    //     console.error(error)
+    // });
+    //     return res.status(400).json({ status: false, message: ' details not found'});
+    //   },
       downloadpdf:async function(req,res){
-        var html = fs.readFileSync(process.cwd()+'/app/views/templete.pug', 'utf8');
-        var options = { format: 'A4', orientation: "portrait" };
-        var users = [
-          {
-              name:"Shyam",
-              age:"26"
-          },
-          {
-              name:"Navjot",
-              age:"26"
-          },
-          {
-              name:"Vitthal",
-              age:"26"
-          }
-      ]
-      var document = {
-          html: html,
-          data: {
-              users: users
-          },
-          path: "./output.pdf"
-      };
-      pdf.create(document, options)
-    .then(res => {
-        console.log(res)
-    })
-    .catch(error => {
-        console.error(error)
-    });
-        return res.status(400).json({ status: false, message: ' details not found'});
-      },
-      // downloadpdf:async function(req,res){
-      //   var final_data = {};
-      //   var id=1;
-      // const baseUrl = __appBaseUrl;
-      // var column = ['id','description'];
-      // let checkId = await masters.getSingleRecord('default_files',column, {id:id});
-      // const fileName = Date.now()+".pdf"
-      // const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
+        var final_data = {};
+        var id=1;
+      const baseUrl = __appBaseUrl;
+      var column = ['id','description'];
+      let checkId = await masters.getSingleRecord('default_files',column, {id:id});
+      const fileName = Date.now()+".pdf"
+      const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
       
-      // const rootPath = path.resolve("./");
-      // const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
-      //   baseUrl: baseUrl,
-      //   data: checkId
-      // });
+      const rootPath = path.resolve("./");
+      const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
+        baseUrl: baseUrl,
+        data: checkId
+      });
 
-      // var html = htmlData;
-      // var options = { format: 'A4', orientation: "portrait" };
+      var html = htmlData;
+      var options = { format: 'A4', orientation: "portrait" };
        
-      // pdf.create(html, options).toFile(pdfPath, function(err, response) {
-      //   if (err) return console.log(err);
-      //   const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
-      //   final_data.url = downloadLink;
-      //   return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
-      // });
-      // },
+      pdf.create(html, options).toFile(pdfPath, function(err, response) {
+        if (err) return console.log(err);
+        const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
+        final_data.url = downloadLink;
+        return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+      });
+      },
       downloadPdfFile: async function(req, res) {
         const fileName = req.params.fileName;
       const filePath = __uploadDir+'/reports/pdf/'+fileName;
