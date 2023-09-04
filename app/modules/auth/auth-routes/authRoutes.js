@@ -46,6 +46,6 @@ router.post('/updatepermission',authMiddleware.checkToken,userController.updatep
 router.post('/permissionlist',authMiddleware.checkToken,userController.permissionlist);
 router.post('/deletepermission',authMiddleware.checkToken,userController.deletepermission);
 router.post('/getpermissionId',authMiddleware.checkToken,userController.getpermissionId);
-router.get('/downloadpdf',userController.downloadpdf);
+router.post('/downloadpdf',userController.downloadpdf);
 router.get('/downloadPdfFile/:filename',userController.downloadPdfFile)
 module.exports = router;
