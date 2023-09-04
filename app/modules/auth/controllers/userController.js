@@ -483,7 +483,6 @@ module.exports = {
         data: checkId
       });
 
-
       var html = htmlData;
       var options = { format: 'A4', orientation: "portrait" };
        
@@ -495,23 +494,32 @@ module.exports = {
       });
       },
 //       downloadpdf:async function(req,res){
+//         var id=req.body.data.id===undefined ? NULL : req.body.data.id;
 //         let pdfDoc = new PDFDocument;
-// pdfDoc.pipe(fs.createWriteStream('SampleDocument.pdf'));
+//          var column = ['id','description'];
+//      let checkId = await masters.getSingleRecord('default_files',column, {id:id});
+//      var description = checkId.description;
+//       const fileName = Date.now()+".pdf"
+//       const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
+//        pdfDoc.pipe(fs.createWriteStream(pdfPath));           
 // pdfDoc.text("My Sample PDF Document");
+// pdfDoc.text(description);
 // pdfDoc.end();
-
+// return res.status(200).send('Error: no such file or directory')
 //       },
-
       downloadPdfFile: async function(req, res) {
-        const fileName = req.params.fileName;
+       var fileName = req.params.filename;
+       //console.log(req.params);
+       // console.log(fileName);
+       // var fileName = '1.pdf';
       const filePath = __uploadDir+'/reports/pdf/'+fileName;
-        var status = await fileHelper.download_any_file(filePath, req, res, false);
-       
+      // var status = await fileHelper.download_any_file(filePath, req, res, false);
+       res.sendFile(filePath);
         //SHOW IN BROWSER
        // var status = await fileHelper.show_pdf_file_browser(filePath, req, res, true);
 
-        if(status == false) {
-            return res.status(200).send('Error: no such file or directory')
-        }
+       // if(status == false) {
+           // return res.status(200).send('Error: no such file or directory')
+       // }
     },
 };
