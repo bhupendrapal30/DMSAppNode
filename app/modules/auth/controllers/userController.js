@@ -486,12 +486,14 @@ module.exports = {
       var html = htmlData;
       var options = { format: 'A4', orientation: "portrait" };
        
-      pdf.create(html, options).toFile(pdfPath, function(err, response) {
-        if (err) return console.log(err);
-        const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
-        final_data.url = downloadLink;
-        return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
-      });
+      // pdf.create(html, options).toFile(pdfPath, function(err, response) {
+      //   if (err) return console.log(err);
+      //   const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
+      //   final_data.url = downloadLink;
+      //   return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+      // });
+             return res.status(200).json({status: true, message: 'download link received successfully', data: 'yyy'});
+
       },
 //       downloadpdf:async function(req,res){
 //         var id=req.body.data.id===undefined ? NULL : req.body.data.id;
