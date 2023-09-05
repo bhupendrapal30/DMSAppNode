@@ -475,8 +475,10 @@ module.exports = {
       var column = ['id','description'];
       let checkId = await masters.getSingleRecord('default_files',column, {id:id});
       const fileName = Date.now()+".pdf"
-      const pdfPath = __uploadDir+'/reports/'+fileName;
-      console.log(pdfPath);
+      //const pdfPath = __uploadDir+'/DMSAppNode/reports/pdf/'+fileName;
+      const pdfPath = fileName;
+
+      console.log();
       const rootPath = path.resolve("./");
       const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
         baseUrl: baseUrl,
