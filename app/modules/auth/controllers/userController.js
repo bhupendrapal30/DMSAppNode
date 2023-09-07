@@ -495,10 +495,10 @@ module.exports = {
       //   }
       // }); 
       pdf.create(html, options).toFile(pdfPath, function(err, response) {
-        final_data = '';
+       // final_data = '';
         if (err) return console.log(err);
-      //   const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
-      //   final_data.url = downloadLink;
+         const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
+        final_data.url = downloadLink;
          return res.status(200).json({status: true, message: 'download link received successfully 1', data: final_data});
        });
             // return res.status(200).json({status: true, message: 'download link received successfully', data: 'yyy'});
