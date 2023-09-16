@@ -118,28 +118,29 @@ module.exports = {
       var finalData = {};
       var where = {};
       where['status'] = '1';
+      where['deletestatus'] = 0;
       var orderby = 'createddate DESC';
-      var columns = ['id','name'];
+      var columns = ['id','name','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'roles', where, orderby );
       finalData.data = response; 
-      return res.status(200).json({status: true, message: 'Role list fetched successfully', data: finalData});
+      return res.status(200).json({status: true, message: 'Role list fetched successfully', data: response});
 
     },
-    fileUpload:async function(req,res,next){
-      var docs = req.file;
-      var filename = docs.filename;
-      var location = docs.path;
+    fileUpload:async function(req,res){
+      
+      var filename = req.body.data.filename;
+      var location = "test";
       let insertData = {
       filename : filename,
       location:location, 
-      description:req.body.description, 
-      category_id:req.body.category_id, 
-      status : req.body.status,
+      description:req.body.data.description, 
+      category_id:req.body.data.category_id, 
+      status : req.body.data.status,
       createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
     }
     var ins = await masters.common_insert('default_files', insertData);
     if(ins){
-      return res.status(200).json({ status: true, message: 'data added successfully', insertData,statusCode:200});
+      return res.status(200).json({ status: true, message: 'data added successfully', data:insertData,statusCode:200});
     } else {
       return res.status(400).json({ status: false, message: 'data not updated'});
     }
@@ -308,16 +309,29 @@ module.exports = {
         var where = {};
         where['status'] = '1';
         var orderby = 'createddate DESC';
-        var columns = ['id','name','status'];
+        var columns = ['id as value','name as label'];
         var response = await masters.get_definecol_bytbl_cond_sorting(columns,'modules', where, orderby );
         finalData.data = response; 
-        return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
+        console.log(response)
+        return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
+      },
+      rolelistingdata: async function(req,res){
+        var finalData = {};
+        var where = {};
+        where['status'] = '1';
+        var orderby = 'createddate DESC';
+        var columns = ['id as value','name as label'];
+        var response = await masters.get_definecol_bytbl_cond_sorting(columns,'roles', where, orderby );
+        finalData.data = response; 
+        console.log(response)
+        return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
       },
       addpermission: async function(req,res){
         var roleid = req.body.data.roleid;
+        
         var moduleid = req.body.data.moduleid;
-        var addedit = req.body.data.addedit;
-        var view = req.body.data.view;
+        var addedit = req.body.data.addedit == true ?1:0;
+        var view = req.body.data.view==true?1:0;
         var deleteflag = req.body.data.deleteflag;
         let checkId = await masters.check_exist('permission', {roleid:roleid,moduleid:moduleid,status:'1',deletestatus:0});
          if(checkId){
@@ -470,7 +484,7 @@ module.exports = {
     //   },
       downloadpdf:async function(req,res){
         var final_data = {};
-        var id=1;
+        var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       const baseUrl = __appBaseUrl;
       var column = ['id','description'];
       let checkId = await masters.getSingleRecord('default_files',column, {id:id});
