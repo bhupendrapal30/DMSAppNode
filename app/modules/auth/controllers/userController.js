@@ -126,10 +126,10 @@ module.exports = {
       return res.status(200).json({status: true, message: 'Role list fetched successfully', data: response});
 
     },
-    fileUpload:async function(req,res){
-      
-      var filename = req.body.data.filename;
-      var location = "test";
+    fileUpload:async function(req,res,next){
+      var docs = req.file;
+      var filename = docs.filename;
+      var location = docs.path;
       let insertData = {
       filename : filename,
       location:location, 
@@ -486,37 +486,51 @@ module.exports = {
         var final_data = {};
         var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       const baseUrl = __appBaseUrl;
-      var column = ['id','description'];
+      var column = ['id','description','filename','location','title'];
       let checkId = await masters.getSingleRecord('default_files',column, {id:id});
-      const fileName = Date.now()+".pdf"
+      var column_company = ['companyname','logo'];
+      let company_details = await masters.getSingleRecord('setting',column_company, {id:1});
+      var logo =  __appBaseUrl+'api/user/downloadPdfFile/'+company_details.logo;
+      console.log(checkId.filename);
+      var file_name = checkId.filename;
+      if(file_name==null || file_name==''){
+      var fileName = Date.now()+".pdf"
+    // var fileName= 'test.pdf';
       const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
       //const pdfPath = fileName;
 
-      console.log(pdfPath);
+      //console.log(pdfPath);
       const rootPath = path.resolve("./");
       const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
         baseUrl: baseUrl,
-        data: checkId
+        data: checkId,
+        companyname:company_details.companyname,
+        logo:logo
       });
 
       var html = htmlData;
-      var options = { format: 'A4', orientation: "portrait" };
-      // pdf.create(html, {
-      //   childProcessOptions: {
-      //     env: {
-      //       OPENSSL_CONF: '/dev/null',
-      //     },
-      //   }
-      // }); 
+      var options = { format: 'A4', orientation: "portrait" };  
+   
+      let updateData = {
+        filename : fileName,
+        updatedby:req.body.data.updatedby, 
+       // status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
+       updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+       //   let update = await masters.common_update('default_files', updateData, {id:id}); 
       pdf.create(html, options).toFile(pdfPath, function(err, response) {
        // final_data = '';
         if (err) return console.log(err);
-         const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
+        const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
         final_data.url = downloadLink;
-         return res.status(200).json({status: true, message: 'download link received successfully 1', data: final_data});
-       });
-            // return res.status(200).json({status: true, message: 'download link received successfully', data: 'yyy'});
-
+        
+        return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+      });
+    } else {
+      const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+file_name;
+      final_data.url = downloadLink;
+      return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+    }
       },
 //       downloadpdf:async function(req,res){
 //         var id=req.body.data.id===undefined ? NULL : req.body.data.id;
