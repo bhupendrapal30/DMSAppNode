@@ -561,4 +561,26 @@ module.exports = {
            // return res.status(200).send('Error: no such file or directory')
        // }
     },
+    categorylist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'createddate DESC';
+      var columns = ['id','categoryname'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'policycategory', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Category list fetched successfully', data: response});
+
+    },
+    standredlist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'createddate DESC';
+      var columns = ['id','name'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'standard', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Standared list fetched successfully', data: response});
+
+    },
 };
