@@ -14,7 +14,7 @@ const fs = require('fs');
 var pdf = require('html-pdf');
 var path = require('path');
 var pug = require('pug');
-var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
+//var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
 //var pdf = require("pdf-creator-node");
 const PDFDocument = require('pdfkit');
 var storage =   multer.diskStorage({  
@@ -126,15 +126,18 @@ module.exports = {
       return res.status(200).json({status: true, message: 'Role list fetched successfully', data: response});
 
     },
-    fileUpload:async function(req,res,next){
-      var docs = req.file;
-      var filename = docs.filename;
-      var location = docs.path;
+    fileUpload:async function(req,res){
+       console.log(req.body.data);
+      var filename = req.body.data.filename;
+      var title = req.body.data.title;
+      var location = "test";
       let insertData = {
       filename : filename,
+      title:title,
       location:location, 
       description:req.body.data.description, 
       category_id:req.body.data.category_id, 
+      standard_id:req.body.data.standard_id,
       status : req.body.data.status,
       createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
     }
@@ -148,7 +151,8 @@ module.exports = {
     },
     fileupdate:async function(req,res,next){
        var id=req.body.id===undefined ? 1 : req.body.id;
-       var column = ['filename', 'location', 'description','description','category_id'];
+       var location = "test";
+       var column = ['filename', 'location', 'description','description','category_id','standard_id'];
     let checkId = await masters.getSingleRecord('default_files',column, {id:id});
       if(checkId){
         var docs = req.file;
@@ -164,6 +168,7 @@ module.exports = {
         location:location, 
         description : req.body.description===undefined ? checkId.description : req.body.description,
         category_id:req.body.category_id===undefined ? checkId.category_id : req.body.category_id, 
+        standard_id:req.body.standard_id===undefined ? checkId.standard_id : req.body.standard_id, 
         status : req.body.status===undefined ? checkId.status : req.body.status,
         createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
@@ -182,8 +187,8 @@ module.exports = {
       var finalData = {};
       var where = {};
       where['status'] = '1';
-      var orderby = 'createddate DESC';
-      var columns = ['id','category_id','filename','location','description','status'];
+      var orderby = 'id DESC';
+      var columns = ['id','category_id','pdflink','title','filename','location','description','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
@@ -285,6 +290,7 @@ module.exports = {
     
     },
     getuserbyId:async function(req,res){
+      
       var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       var column = ['id','fname','lname','mobileNo','email','company_name','usertype','password','status','deletestatus','createdby','createddate','upadtedby','updateddate'];
       let checkId = await masters.getSingleRecord('users',column, {id:id});
@@ -449,44 +455,23 @@ module.exports = {
             return res.status(400).json({ status: false, message: ' details not found'});
           }
       },
-    //   downloadpdf:async function(req,res){
-    //     var html = fs.readFileSync(process.cwd()+'/app/views/templete.pug', 'utf8');
-    //     var options = { format: 'A4', orientation: "portrait" };
-    //     var users = [
-    //       {
-    //           name:"Shyam",
-    //           age:"26"
-    //       },
-    //       {
-    //           name:"Navjot",
-    //           age:"26"
-    //       },
-    //       {
-    //           name:"Vitthal",
-    //           age:"26"
-    //       }
-    //   ]
-    //   var document = {
-    //       html: html,
-    //       data: {
-    //           users: users
-    //       },
-    //       path: "./output.pdf"
-    //   };
-    //   pdf.create(document, options)
-    // .then(res => {
-    //     console.log(res)
-    // })
-    // .catch(error => {
-    //     console.error(error)
-    // });
-    //     return res.status(400).json({ status: false, message: ' details not found'});
-    //   },
-      downloadpdf:async function(req,res){
+
+      getPolicyId:async function(req,res){
+        var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+        var column = ['*'];
+        let checkId = await masters.getSingleRecord('default_files',column, {id:id});
+          if(checkId){
+                return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+          }else{
+            return res.status(400).json({ status: false, message: ' details not found'});
+          }
+      },
+
+        downloadpdf:async function(req,res){
         var final_data = {};
         var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       const baseUrl = __appBaseUrl;
-      var column = ['id','description','filename','location','title'];
+      var column = ['*'];
       let checkId = await masters.getSingleRecord('default_files',column, {id:id});
       var column_company = ['companyname','logo'];
       let company_details = await masters.getSingleRecord('setting',column_company, {id:1});
@@ -523,12 +508,14 @@ module.exports = {
         if (err) return console.log(err);
         const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+fileName;
         final_data.url = downloadLink;
-        
+        update =  masters.common_update('default_files', {"pdflink":downloadLink}, {id:id});
         return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
       });
     } else {
+      
       const downloadLink = __appBaseUrl+'api/user/downloadPdfFile/'+file_name;
       final_data.url = downloadLink;
+         update =  masters.common_update('default_files', {"pdflink":downloadLink}, {id:id});
       return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
     }
       },
@@ -566,7 +553,7 @@ module.exports = {
       var where = {};
       where['status'] = '1';
       var orderby = 'createddate DESC';
-      var columns = ['id','categoryname'];
+      var columns = ['id as value','name as label'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'policycategory', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'Category list fetched successfully', data: response});
@@ -577,7 +564,7 @@ module.exports = {
       var where = {};
       where['status'] = '1';
       var orderby = 'createddate DESC';
-      var columns = ['id','name'];
+      var columns = ['id as value','name as label'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'standard', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'Standared list fetched successfully', data: response});

@@ -4,11 +4,15 @@ var path = require('path');
 var http = require('http').Server(app);
 var authRoutes = require('./app/modules/auth/auth-routes/authRoutes');
 var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({limit: '500mb', extended: true}));
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 var cors = require('cors');
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.use(bodyParser.json({limit: '500mb', extended: true}));
+app.use(bodyParser.urlencoded({limit: "500mb", extended: true, parameterLimit:50000}));
+app.use(bodyParser.text({ limit: '500mb' }));
+
 const { appBaseUrl,uploadDir} = require('./app/config/config');
 global.__basedir = __dirname;
 global.__appBaseUrl = appBaseUrl;
@@ -18,6 +22,10 @@ global.__basedir = __dirname;
 // allow static files
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
+
+const cors = require('cors');
+
+app.use(cors({ origin: '*' }));
 
 // app.get('/', (req, res) => {
 // 	return res.send("home page"+__dirname);
