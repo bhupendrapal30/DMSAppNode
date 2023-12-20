@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({limit: '500mb', extended: true}));
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
-var cors = require('cors');
+const cors = require('cors');
 
 app.use(bodyParser.json({limit: '500mb', extended: true}));
 app.use(bodyParser.urlencoded({limit: "500mb", extended: true, parameterLimit:50000}));
@@ -23,7 +23,7 @@ global.__basedir = __dirname;
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const cors = require('cors');
+
 
 app.use(cors({ origin: '*' }));
 
