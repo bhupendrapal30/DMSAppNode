@@ -16,7 +16,7 @@ var path = require('path');
 var pug = require('pug');
 //var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
 //var pdf = require("pdf-creator-node");
-const PDFDocument = require('pdfkit');
+//const PDFDocument = require('pdfkit');
 var storage =   multer.diskStorage({  
   destination: function (req, file, callback) {  
     callback(null, './uploads');  
@@ -130,12 +130,14 @@ module.exports = {
        console.log(req.body.data);
       var filename = req.body.data.filename;
       var title = req.body.data.title;
+      var version = req.body.data.file_version;
       var location = "test";
       let insertData = {
       filename : filename,
       title:title,
       location:location, 
-      description:req.body.data.description, 
+      description:req.body.data.description,
+      file_version: version, 
       category_id:req.body.data.category_id, 
       standard_id:req.body.data.standard_id,
       status : req.body.data.status,
@@ -150,48 +152,97 @@ module.exports = {
      
     },
     fileupdate:async function(req,res,next){
-       var id=req.body.id===undefined ? 1 : req.body.id;
+       var id=req.body.data.id===undefined ? 1 : req.body.data.id;
+       
        var location = "test";
-       var column = ['filename', 'location', 'description','description','category_id','standard_id'];
+       var filename = req.body.data.filename;
+       var filename = req.body.data.policyType;
+       var title = req.body.data.title;
+       var version = req.body.data.file_version;
+       var location = "test";
+       var column = ['id','filename', 'location', 'description','category_id','standard_id','file_version'];
     let checkId = await masters.getSingleRecord('default_files',column, {id:id});
+     console.log(checkId);
       if(checkId){
-        var docs = req.file;
-        if(req.file){
-        var filename = req.file.filename;
-        var location = req.file.path;
-        } else {
-          var filename = checkId.filename;
-          var location = checkId.location;
-        }
         let updateData = {
         filename : filename,
+        title:title,
         location:location, 
-        description : req.body.description===undefined ? checkId.description : req.body.description,
-        category_id:req.body.category_id===undefined ? checkId.category_id : req.body.category_id, 
-        standard_id:req.body.standard_id===undefined ? checkId.standard_id : req.body.standard_id, 
-        status : req.body.status===undefined ? checkId.status : req.body.status,
+        file_version:version,  
+        description:req.body.data.description, 
+        category_id:req.body.data.category_id, 
+        standard_id:req.body.data.standard_id,
+        status : req.body.data.status,
         createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
-          let update = await masters.common_update('default_files', updateData, {id:id});
-          if(update){
-            return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
-          } else {
-            return res.status(400).json({ status: false, message: 'data not updated'});
+        let update = await masters.common_update('default_files', updateData, {id:id});
+         if(update){
+          let insertData_version = {
+            default_id : checkId.id,
+            filename:checkId.filename, 
+            location:checkId.location,
+            description:checkId.description, 
+            category_id:checkId.category_id,
+            standard_id : checkId.standard_id,
+            title: checkId.title,
+            pdflink:checkId.pdflink,
+            status : req.body.status,
+            createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
           }
+          var ins_version = await masters.common_insert('default_files_version', insertData_version);
+           return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
       }else{
         return res.status(400).json({ status: false, message: ' details not found'});
       }
      
     },
+    // defaultfilelist: async function(req,res){
+    //   var finalData = {};
+    //   var where = {};
+    //   where['status'] = '1';
+    //   var orderby = 'id DESC';
+    //   var columns = ['id','category_id','pdflink','title','filename','location','description','status','file_version'];
+    //   var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
+    //   finalData.data = response; 
+    //   return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
+    // },
+
     defaultfilelist: async function(req,res){
       var finalData = {};
       var where = {};
       where['status'] = '1';
-      var orderby = 'id DESC';
-      var columns = ['id','category_id','pdflink','title','filename','location','description','status'];
-      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
-      finalData.data = response; 
-      return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
+      var orderby = 'createddate DESC';
+      var columns = ['id','category_id','pdflink','title','filename','location','description','status','file_version'];
+     // var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
+     // finalData.data = response; 
+     // return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
+      var joins = [
+        {
+            table: 'policycategory as policycategory',
+            condition: ['default_files.category_id', '=', 'policycategory.id'],
+            jointype: 'LEFT'
+        },
+        {
+          table: 'standard',
+          condition: ['default_files.standard_id', '=', 'standard.id'],
+          jointype: 'LEFT'
+      }
+    ];
+    var orderby = 'default_files.createddate DESC';
+    var where = {'default_files.status':1};
+    var extra_whr = '';
+    var limit_arr = '';
+    var columns = ['default_files.id','default_files.pdflink','default_files.title','default_files.file_version','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.name as categoryname','standard.name as standardname'];
+    //    var limit_arr = { 'limit': 10, 'offset': 1 };
+    var result = await apiModel.get_joins_records('default_files', columns, joins, where, orderby, extra_whr, limit_arr);
+    
+    return res.status(200).json({ status: true, message: 'Permisssion List fetched successfully', data: result, statusCode: 200});
+
+   
+   
     },
     addrole: async function(req,res){
       let checkId = await masters.check_exist('roles', {name:req.body.data.name,status:'1'});
@@ -568,6 +619,36 @@ module.exports = {
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'standard', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'Standared list fetched successfully', data: response});
+
+    },
+
+    defaultfilelist_version:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      var orderby = 'createddate DESC';
+      var columns = ['id','category_id','filename','location','description','status'];
+     var joins = [
+        {
+            table: 'policycategory as policycategory',
+            condition: ['default_files.standard_id', '=', 'policycategory.id'],
+            jointype: 'LEFT'
+        },
+        {
+          table: 'standard',
+          condition: ['default_files.category_id', '=', 'standard.id'],
+          jointype: 'LEFT'
+      }
+    ];
+    var orderby = 'default_files.createddate DESC';
+    var where = {'default_files.status':1,'default_id':id};
+    var extra_whr = '';
+    var limit_arr = '';
+    var columns = ['default_files.id','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.categoryname','standard.name as standardnane'];
+    //    var limit_arr = { 'limit': 10, 'offset': 1 };
+    var response = await apiModel.get_joins_records('default_files_version as default_files', columns, joins, where, orderby, extra_whr, limit_arr);
+    
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
 
     },
 };

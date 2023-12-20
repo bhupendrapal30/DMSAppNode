@@ -34,6 +34,9 @@ router.get('/rolelist',authMiddleware.checkToken,userController.rolelist);
 router.post('/fileupload',authMiddleware.checkToken, userController.fileUpload);
 router.post('/fileupdate',authMiddleware.checkToken, userController.fileupdate);
 
+
+
+
 router.get('/defaultfilelist',userController.defaultfilelist); 
 router.post('/addrole',authMiddleware.checkToken,userController.addrole); 
 router.post('/updaterole',authMiddleware.checkToken,userController.updaterole);
