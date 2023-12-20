@@ -150,6 +150,7 @@ module.exports = {
       return res.status(400).json({ status: false, message: 'data not updated'});
     }
      
+    
     },
     fileupdate:async function(req,res,next){
        var id=req.body.data.id===undefined ? 1 : req.body.data.id;
