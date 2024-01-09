@@ -59,4 +59,5 @@ router.post('/downloadpdf',userController.downloadpdf);
 router.get('/downloadPdfFile/:filename',userController.downloadPdfFile);
 router.get('/categorylist',authMiddleware.checkToken,userController.categorylist);
 router.get('/standredlist',authMiddleware.checkToken,userController.standredlist);
+router.post('/defaultfileversionlist',userController.defaultfilelist_version);
 module.exports = router;

@@ -135,6 +135,7 @@ module.exports = {
       let insertData = {
       filename : filename,
       title:title,
+      policyType:req.body.data.policyType,
       location:location, 
       description:req.body.data.description,
       file_version: version, 
@@ -161,14 +162,15 @@ module.exports = {
        var title = req.body.data.title;
        var version = req.body.data.file_version;
        var location = "test";
-       var column = ['id','filename', 'location', 'description','category_id','standard_id','file_version'];
+       var column = ['id','filename','title','location', 'description','category_id','standard_id','file_version'];
     let checkId = await masters.getSingleRecord('default_files',column, {id:id});
-     console.log(checkId);
+     
       if(checkId){
         let updateData = {
         filename : filename,
         title:title,
-        location:location, 
+        location:location,
+        policyType:req.body.data.policyType, 
         file_version:version,  
         description:req.body.data.description, 
         category_id:req.body.data.category_id, 
@@ -176,6 +178,7 @@ module.exports = {
         status : req.body.data.status,
         createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
+        console.log(checkId);
         let update = await masters.common_update('default_files', updateData, {id:id});
          if(update){
           let insertData_version = {
@@ -185,7 +188,7 @@ module.exports = {
             description:checkId.description, 
             category_id:checkId.category_id,
             standard_id : checkId.standard_id,
-            title: checkId.title,
+            title:checkId.title,
             pdflink:checkId.pdflink,
             status : req.body.status,
             createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
@@ -624,11 +627,12 @@ module.exports = {
     },
 
     defaultfilelist_version:async function(req,res){
+      
       var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       var finalData = {};
       var where = {};
       var orderby = 'createddate DESC';
-      var columns = ['id','category_id','filename','location','description','status'];
+      var columns = ['id','category_id','pdflink','title','filename','location','description','status','file_version'];
      var joins = [
         {
             table: 'policycategory as policycategory',
@@ -645,7 +649,7 @@ module.exports = {
     var where = {'default_files.status':1,'default_id':id};
     var extra_whr = '';
     var limit_arr = '';
-    var columns = ['default_files.id','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.categoryname','standard.name as standardnane'];
+    var columns = ['default_files.id','default_files.pdflink','default_files.title','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.name as categoryname','standard.name as standardname'];
     //    var limit_arr = { 'limit': 10, 'offset': 1 };
     var response = await apiModel.get_joins_records('default_files_version as default_files', columns, joins, where, orderby, extra_whr, limit_arr);
     
