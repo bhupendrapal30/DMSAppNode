@@ -656,4 +656,5 @@ module.exports = {
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
 
     },
+    // for list 
 };
