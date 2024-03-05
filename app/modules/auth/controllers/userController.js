@@ -657,4 +657,38 @@ module.exports = {
 
     },
     // for list 
+    addtraining: async function(req,res,next){
+      var docs = req.file;
+      var trainingfile = docs.filename;
+      var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+      var description=req.body.description===undefined ? NULL : req.body.description;
+      var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+      var trainingtype=req.body.trainingtype===undefined ? NULL : req.body.trainingtype;
+      var trainingURL=req.body.trainingURL===undefined ? NULL : req.body.trainingURL;
+      var startdate=req.body.startdate===undefined ? NULL : req.body.startdate;
+      var enddate=req.body.enddate===undefined ? NULL : req.body.enddate;
+       var quizId=req.body.quizId===undefined ? NULL : req.body.quizId;
+      var feedbacksurveyId=req.body.feedbacksurveyId===undefined ? NULL : req.body.feedbacksurveyId;
+      // var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+           let insertData = {
+            trainingname : trainingname,
+            description:description,
+            trainingtype:trainingtype,
+            trainingURL:trainingURL,
+            trainingfile:trainingfile,
+            startdate:startdate,
+            enddate:enddate,
+            quizId:quizId,
+            feedbacksurveyId:feedbacksurveyId,
+          createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        }
+            let update = await masters.common_insert('training_management', insertData);
+            if(update){
+              return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertid:update,statusCode:200});
+            } else {
+              return res.status(400).json({ status: false, message: 'data not updated'});
+            }
+  
+    },
+  
 };

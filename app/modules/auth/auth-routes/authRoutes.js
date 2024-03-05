@@ -60,4 +60,5 @@ router.get('/downloadPdfFile/:filename',userController.downloadPdfFile);
 router.get('/categorylist',authMiddleware.checkToken,userController.categorylist);
 router.get('/standredlist',authMiddleware.checkToken,userController.standredlist);
 router.post('/defaultfileversionlist',userController.defaultfilelist_version);
+router.post('/addtraining',upload.single('trainingfile'),userController.addtraining);
 module.exports = router;
