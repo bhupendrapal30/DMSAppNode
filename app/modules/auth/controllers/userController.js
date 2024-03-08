@@ -656,39 +656,531 @@ module.exports = {
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
 
     },
-    // for list 
-    addtraining: async function(req,res,next){
-      var docs = req.file;
-      var trainingfile = docs.filename;
-      var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
-      var description=req.body.description===undefined ? NULL : req.body.description;
-      var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
-      var trainingtype=req.body.trainingtype===undefined ? NULL : req.body.trainingtype;
-      var trainingURL=req.body.trainingURL===undefined ? NULL : req.body.trainingURL;
-      var startdate=req.body.startdate===undefined ? NULL : req.body.startdate;
-      var enddate=req.body.enddate===undefined ? NULL : req.body.enddate;
-       var quizId=req.body.quizId===undefined ? NULL : req.body.quizId;
-      var feedbacksurveyId=req.body.feedbacksurveyId===undefined ? NULL : req.body.feedbacksurveyId;
-      // var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
-           let insertData = {
-            trainingname : trainingname,
-            description:description,
-            trainingtype:trainingtype,
-            trainingURL:trainingURL,
-            trainingfile:trainingfile,
-            startdate:startdate,
-            enddate:enddate,
-            quizId:quizId,
-            feedbacksurveyId:feedbacksurveyId,
+    clauselist:async function(req,res){
+      var finalData = {};
+
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;      var where = {};
+      where['status'] = '1';
+      where['frameworkid'] = frameworkid;
+      var orderby = 'id ASC';
+      var columns = ['id as value','clause as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Clause list fetched successfully', data: response});
+
+    },
+    subclauselist:async function(req,res){
+      var finalData = {};
+      var clause_id=req.body.data.clause_id===undefined ? NULL : req.body.data.clause_id;
+      var where = {};
+      where['status'] = '1';
+      where['clause_id'] = clause_id;
+      var orderby = 'id ASC';
+      var columns = ['id','sabclause as name'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Sub Clause list fetched successfully', data: response});
+
+    },
+    defaultfilelist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id', 'Standard', 'Clause', 'Subclause', 'ControlTitle', 'ControlsDescription', 'Control_Applicability', 'Exclusion_Justification', 'Remarks', 'version', 'Creator', 'createdon', 'approver', 'approvedon', 'Enable', 'Artifacttype', 'ArtifactName', 'Domain', 'weightage', 'code', 'status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files_list', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: ' list fetched successfully', data: response});
+
+    },
+    assigner:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['assignerflag'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id','fname','lname'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'users', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    owner:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['ownerflag'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id','fname','lname'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'users', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    department:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id','departmentname'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'Department', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    reccurence: async function reccurence(){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id','name'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'reccurence', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    createpolicy: async function createpolicy(req,res){
+     // console.log(req.body);
+      let insertData = {
+        policyname:req.body.data.policyname, 
+        primaryassignee:req.body.data.primaryassignee, 
+        reccurenceid:req.body.data.reccurenceid, 
+        departmentsid:req.body.data.departmentsid, 
+        policyrequirements:req.body.data.policyrequirements, 
+        createdby:req.body.data.createdby, 
+        status : 1,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('policy', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertId:ins,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please check the mobile or password'}); 
+      }
+    },
+    frameworklist: async function frameworklist(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id DESC';
+      var columns = ['id','name'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'framework', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    controlist: async function controlist(req,res){
+      var finalData = {};
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+
+      var where = {};
+      where['status'] = '1';
+      where['frameworkid'] = frameworkid;
+      var orderby = 'id DESC';
+      var columns = ['id','name'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'control', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    subcontrolist: async function subcontrolist(req,res){
+      var finalData = {};
+      var control_id=req.body.data.control_id===undefined ? NULL : req.body.data.control_id;
+
+      var where = {};
+      where['status'] = '1';
+      where['control_id'] = control_id;
+      var orderby = 'id DESC';
+      var columns = ['id','name'];
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'subcontrol', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    cratepolicyowner: async function(req,res){
+      var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
+      var ownerid = req.body.data.ownerid===undefined ? NULL : req.body.data.ownerid;
+      var checkId_id = [];
+      await knex.select('id').from('policy_owner_mapping')
+        .whereRaw("policyid = '"+policyid+"' and ownerid= "+ownerid+" and status=1")
+        .then((result) => {
+          checkId_id = result.length > 0 ? result[0] : false;
+        }, (error) => {console.log(error);});
+       if(checkId_id){
+       return res.status(422).json({status: false, error: 'Please check details Already exits'}); 
+       }
+           let updateData = {
+          policyid : policyid,
+          ownerid:ownerid, 
+          status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
           createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
         }
-            let update = await masters.common_insert('training_management', insertData);
+            let update = await masters.common_insert('policy_owner_mapping', updateData);
             if(update){
-              return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertid:update,statusCode:200});
+              return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,insertid:update,statusCode:200});
             } else {
               return res.status(400).json({ status: false, message: 'data not updated'});
             }
-  
+
     },
+    cratepolicyapprover: async function(req,res){
+      var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
+      var approverid = req.body.data.approverid===undefined ? NULL : req.body.data.approverid;
+  //    var approver_id = req.body.data.approver_id===undefined ? NULL : req.body.data.approver_id;
+
+      // var checkId_id = [];
+      // await knex.select('id').from('policy_approver_mapping')
+      //   .whereRaw("policyid = '"+policyid+"' and approverid= "+approverid+" and status=1")
+      //   .then((result) => {
+      //     checkId_id = result.length > 0 ? result[0] : false;
+      //   }, (error) => {console.log(error);});
+      //  if(checkId_id){
+      //  return res.status(422).json({status: false, error: 'Please check details Already exits'}); 
+      //  }
+
+           let updateData = {
+          policyid : policyid,
+          approverid:approverid, 
+          status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
+          createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        }
+            let update = await masters.common_insert('policy_approver_mapping', updateData);
+            if(update){
+              return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,insertid:update,statusCode:200});
+            } else {
+              return res.status(400).json({ status: false, message: 'data not updated'});
+            }
+
+    },
+    policycontralmapping: async function(req,res){
+      var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
+      var approverid = req.body.data.approverid===undefined ? NULL : req.body.data.approverid;
+      var checkId_id = [];
+      await knex.select('id').from('policy_approver_mapping')
+        .whereRaw("policyid = '"+policyid+"' and approverid= "+approverid+" and status=1")
+        .then((result) => {
+          checkId_id = result.length > 0 ? result[0] : false;
+        }, (error) => {console.log(error);});
+       if(checkId_id){
+       return res.status(422).json({status: false, error: 'Please check details Already exits'}); 
+       }
+           let updateData = {
+          policyid : policyid,
+          approverid:approverid, 
+          status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
+          createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        }
+            let update = await masters.common_insert('policy_approver_mapping', updateData);
+            if(update){
+              return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,insertid:update,statusCode:200});
+            } else {
+              return res.status(400).json({ status: false, message: 'data not updated'});
+            }
+
+    },
+    policyupdate: async function(req,res){
+      var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
+      var approverid = req.body.data.approverid===undefined ? NULL : req.body.data.approverid;
+      var ownerid = req.body.data.ownerid===undefined ? NULL : req.body.data.ownerid;
+      var policyname = req.body.data.policyname===undefined ? NULL : req.body.data.policyname;
+      var primaryassignee = req.body.data.primaryassignee===undefined ? NULL : req.body.data.primaryassignee;
+      var reccurenceid = req.body.data.reccurenceid===undefined ? NULL : req.body.data.reccurenceid;
+      var departmentsid = req.body.data.departmentsid===undefined ? NULL : req.body.data.departmentsid;
+      var ownerid = req.body.data.ownerid===undefined ? NULL : req.body.data.ownerid;
+      var policyrequirements = req.body.data.policyrequirements===undefined ? NULL : req.body.data.policyrequirements;
+      var updatedby = req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var cluse = req.body.data.cluse===undefined ? NULL : req.body.data.cluse;
+      var control = req.body.data.control===undefined ? NULL : req.body.data.control;
+      var frameworkid = req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      const delapmwhereData = {};
+      delapmwhereData['policyid'] = policyid;
+       await masters.common_delete('policy_approver_mapping', delapmwhereData);
+        approverid.forEach((element, index) =>  {
+        //console.log(`Current index: ${index}`);
+        approverid = element;
+        let updateData = {
+          policyid : policyid,
+          approverid:approverid, 
+          status : 1,
+          createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        }
+            let update =  masters.common_insert('policy_approver_mapping', updateData);
+       // console.log(element);
+    });
+    let delowmwhereData = {}
+    delowmwhereData['policyid'] = policyid;
+    await masters.common_delete('policy_owner_mapping', delowmwhereData);
+    ownerid.forEach((element, index) =>  {
+     //console.log(`Current index: ${index}`);
+     owner_id = element;
+     let updateData = {
+       policyid : policyid,
+       ownerid:owner_id, 
+       status : 1,
+       createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+     }
+         let update =  masters.common_insert('policy_owner_mapping', updateData);
+    // console.log(element);
+ });
+
+ let delclusewhereData = {}
+ delclusewhereData['policyid'] = policyid;
+    await masters.common_delete('policycluse_mapping', delclusewhereData);
+    cluse.forEach((element, index) =>  {
+     //console.log(`Current index: ${index}`);
+     let clauseid = element.clauseid;
+     let subclauseid = element.subclauseid;
+     let updateData = {
+       policyid : policyid,
+       clauseid:clauseid,
+       subclauseid:subclauseid,
+       status : 1,
+       createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+     }
+         let update =  masters.common_insert('policycluse_mapping', updateData);
+    // console.log(element);
+ });
+ let delcontrolwhereData = {}
+ delcontrolwhereData['policyid'] = policyid;
+    await masters.common_delete('policycontral_mapping', delcontrolwhereData);
+    control.forEach((element, index) =>  {
+     //console.log(`Current index: ${index}`);
+     let subcontrolid = element.subcontrolid;
+     let controlid = element.controlid;
+     let updateData = {
+       policyid : policyid,
+       subcontrolid:subcontrolid,
+       controlid:controlid,
+       status : 1,
+       createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+     }
+         let update =  masters.common_insert('policycontral_mapping', updateData);
+    // console.log(element);
+ });
+ let updateData = {
+  id : policyid,
+  policyname:policyname, 
+  status : 1,
+  primaryassignee:primaryassignee,
+  reccurenceid:reccurenceid,
+  departmentsid:departmentsid,
+  policyrequirements:policyrequirements,
+  updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+  updatedby:updatedby,
+  frameworkid:frameworkid
+}
+    let update =  masters.common_update('policy', updateData,{id:policyid});
+    if(update){
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,insertid:update,statusCode:200});
+    } else {
+      return res.status(400).json({ status: false, message: 'data not updated'});
+    }
+    
+
+    },
+    policyfileupdate:async function(req,res,next){
+      var docs = req.file;
+      var filename = docs.filename;
+      var location = docs.path;
+      var policyType = req.body.policyType;
+      var file_version = req.body.file_version;
+      var description = req.body.description;
+      var optional_description = req.body.optional_description;
+      var policyid = req.body.policyid;
+     var column = ['id','file_version'];
+   let checkId = await masters.getSingleRecord('policy',column, {id:policyid}); 
+     if(checkId){
+       let updateData = {
+        policyType : policyType,
+        file_version:file_version,
+        description:description, 
+        optional_description:optional_description,
+        filename:filename,
+        location:location
+
+     }
+       let update = await masters.common_update('policy', updateData, {id:policyid});
+        if(update){
+        //  let insertData_version = {
+        //    default_id : checkId.id,
+        //    filename:checkId.filename, 
+        //    location:checkId.location,
+        //    description:checkId.description, 
+        //    category_id:checkId.category_id,
+        //    standard_id : checkId.standard_id,
+        //    title:checkId.title,
+        //    pdflink:checkId.pdflink,
+        //    status : req.body.status,
+        //    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        //  }
+        //  var ins_version = await masters.common_insert('default_files_version', insertData_version);
+          
+         return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
+        } else {
+          return res.status(400).json({ status: false, message: 'data not updated'});
+        }
+    }else{
+       return res.status(400).json({ status: false, message: ' details not found'});
+  } 
+   },
+   policylist: async function(req,res){
+    var finalData = {};
+    var where = {};
+    where['status'] = '1';
+    var orderby = 'createddate DESC';
+    var columns = ['policy.id', 'policy.frameworkid', 'policy.policyname', 'policy.primaryassignee', 'policy.reccurenceid', 'policy.departmentsid', 'policy.policyrequirements', 'policy.status', 'policy.file_version', 'policy.filename', 'policy.location', 'policy.pdflink', 'policy.description', 'policy.optional_description', 'policy.policyType','framework.name as frameworkname','users.fname as primaryassignefname','users.lname as primaryassignelname','reccurence.name as reccurencename','Department.departmentname as Departmentname'];
+   // var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
+   // finalData.data = response; 
+   // return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
+    var joins = [
+      {
+          table: 'framework as framework',
+          condition: ['policy.frameworkid', '=', 'framework.id'],
+          jointype: 'LEFT'
+      },
+      {
+        table: 'users',
+        condition: ['policy.primaryassignee', '=', 'users.id'],
+        jointype: 'LEFT'
+    },
+    {
+      table: 'reccurence',
+      condition: ['policy.reccurenceid', '=', 'reccurence.id'],
+      jointype: 'LEFT'
+  },
+  {
+    table: 'Department',
+    condition: ['policy.departmentsid', '=', 'Department.id'],
+    jointype: 'LEFT'
+}
+  ];
+  var orderby = 'policy.createddate DESC';
+  var where = {'policy.status':1};
+  var extra_whr = '';
+  var limit_arr = '';
+  //var columns = ['default_files.id','default_files.pdflink','default_files.title','default_files.file_version','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.name as categoryname','standard.name as standardname'];
+  //    var limit_arr = { 'limit': 10, 'offset': 1 };
+  var result = await apiModel.get_joins_records('policy', columns, joins, where, orderby, extra_whr, limit_arr);
+  var approver_mapping =  apiModel.get_joins_records('policy', columns, joins, where, orderby, extra_whr, limit_arr);
+  return res.status(200).json({ status: true, message: 'Permisssion List fetched successfully', data: result, statusCode: 200});
+  },
   
+  addtraining: async function(req,res,next){
+    var docs = req.file;
+    console.log(docs);
+    if(docs){
+    var trainingfile = docs.filename;
+    } else {
+      var trainingfile = '';
+    }
+    var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+    var description=req.body.description===undefined ? NULL : req.body.description;
+    var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+    var trainingtype=req.body.trainingtype===undefined ? NULL : req.body.trainingtype;
+    var trainingURL=req.body.trainingURL===undefined ? NULL : req.body.trainingURL;
+    var startdate=req.body.startdate===undefined ? NULL : req.body.startdate;
+    var enddate=req.body.enddate===undefined ? NULL : req.body.enddate;
+     var quizId=req.body.quizId===undefined ? NULL : req.body.quizId;
+    var feedbacksurveyId=req.body.feedbacksurveyId===undefined ? NULL : req.body.feedbacksurveyId;
+    // var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+         let insertData = {
+          trainingname : trainingname,
+          description:description,
+          trainingtype:trainingtype,
+          trainingURL:trainingURL,
+          trainingfile:trainingfile,
+          startdate:startdate,
+          enddate:enddate,
+          quizId:quizId,
+          feedbacksurveyId:feedbacksurveyId,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+          let update = await masters.common_insert('training_management', insertData);
+          if(update){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertid:update,statusCode:200});
+          } else {
+            return res.status(400).json({ status: false, message: 'data not updated'});
+          }
+
+  },
+  traininglist: async function(req,res){
+    var finalData = {};
+    var where = {};
+    where['status'] = '1';
+    var orderby = 'createddate DESC';
+    var columns = ['trainingname', 'description', 'trainingtype', 'trainingURL', 'trainingfile', 'startdate', 'enddate', 'quizId', 'feedbacksurveyId', 'status','remarks'];
+    var response = await masters.get_definecol_bytbl_cond_sorting(columns,'training_management', where, orderby );
+    finalData.data = response;
+    return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
+  },
+  traininupdate: async function(req,res){
+    var trainingid=req.body.trainingid===undefined ? NULL : req.body.trainingid;
+    var docs = req.file;
+    console.log(docs);
+    if(docs){
+    var trainingfile = docs.filename;
+    } else {
+      var trainingfile = '';
+    }
+    var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+    var description=req.body.description===undefined ? NULL : req.body.description;
+    var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+    var trainingtype=req.body.trainingtype===undefined ? NULL : req.body.trainingtype;
+    var trainingURL=req.body.trainingURL===undefined ? NULL : req.body.trainingURL;
+    var startdate=req.body.startdate===undefined ? NULL : req.body.startdate;
+    var enddate=req.body.enddate===undefined ? NULL : req.body.enddate;
+     var quizId=req.body.quizId===undefined ? NULL : req.body.quizId;
+    var feedbacksurveyId=req.body.feedbacksurveyId===undefined ? NULL : req.body.feedbacksurveyId;
+    // var trainingname=req.body.trainingname===undefined ? NULL : req.body.trainingname;
+         let updateData = {
+          trainingname : trainingname,
+          description:description,
+          trainingtype:trainingtype,
+          trainingURL:trainingURL,
+          trainingfile:trainingfile,
+          startdate:startdate,
+          enddate:enddate,
+          quizId:quizId,
+          feedbacksurveyId:feedbacksurveyId,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+         }
+         var column = ['id'];
+    let checkId = await masters.getSingleRecord('training_management',column, {id:trainingid}); 
+    if(checkId){
+      let update = await masters.common_update('training_management', updateData, {id:trainingid});
+       if(update){   
+        return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
+       } else {
+         return res.status(400).json({ status: false, message: 'data not updated'});
+       }
+   }else{
+      return res.status(400).json({ status: false, message: ' details not found'});
+ } 
+  },
+  trainingdetail: async function(req,res){
+    var trainingid=req.body.data.trainingid===undefined ? NULL : req.body.data.trainingid;
+    var finalData = {};
+    var where = {};
+    where['status'] = '1';
+    where['id']= trainingid;
+    var orderby = 'createddate DESC';
+    var columns = ['trainingname', 'description', 'trainingtype', 'trainingURL', 'trainingfile', 'startdate', 'enddate', 'quizId', 'feedbacksurveyId', 'status','remarks'];
+    var response = await masters.get_definecol_bytbl_cond_sorting(columns,'training_management', where, orderby );
+    finalData.data = response;
+    return res.status(200).json({status: true, message: 'fetched successfully', data:finalData,statusCode:200});
+  }
 };
