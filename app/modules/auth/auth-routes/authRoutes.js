@@ -80,4 +80,15 @@ router.post('/addtraining',upload.single('trainingfile'),userController.addtrain
 router.get('/traininglist',userController.traininglist);
 router.post('/traininupdate',upload.single('trainingfile'),userController.traininupdate);
 router.get('/trainingdetail',userController.trainingdetail);
+router.post('/policydetails',userController.policydetails);
+router.get('/approverlist',userController.approverlist);
+router.get('/approvepolicy',userController.approvepolicy);
+router.post('/addquiz',userController.addquiz);
+router.get('/quizlist',userController.quizlist);
+router.get('/quizdetails',userController.quizdetails);
+router.post('/quizupdate',userController.quizupdate);
+router.post('/addquestion',userController.addquestion);
+router.get('/questionlist',userController.questionlist);
+router.get('/questiondetails',userController.questiondetails);
+router.post('/questionupdate',userController.questionupdate);
 module.exports = router;
