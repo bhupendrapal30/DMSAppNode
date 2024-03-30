@@ -1494,5 +1494,164 @@ questionupdate: async function(req,res){
     return res.status(400).json({ status: false, message: ' details not found'});
 } 
 
+},
+quizfilter:async function(req,res){
+  var finalData = {};
+  var where = {};
+  where['status'] = '1';
+  var orderby = 'id ASC';
+  var columns = ['id', 'quizname'];
+  var response = await masters.get_definecol_bytbl_cond_sorting(columns,'quiz', where, orderby );
+  finalData.data = response; 
+  return res.status(200).json({status: true, message: 'Quiz filter fetched successfully', data: response});
+
+},
+downloadpolicy:async function(req,res){
+  var final_data = {};
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+const baseUrl = __appBaseUrl;
+var column = ['*'];
+let checkId = await masters.getSingleRecord('policy',column, {id:id});
+var column_company = ['companyname','logo'];
+let company_details = await masters.getSingleRecord('setting',column_company, {id:1});
+var logo =  __appBaseUrl+'api/user/downloadPdfFile/'+company_details.logo;
+console.log(checkId.filename);
+var file_name = checkId.filename;
+if(file_name==null || file_name==''){
+var fileName = Date.now()+".pdf"
+const pdfPath = __uploadDir+'/reports/pdf/'+fileName;
+const rootPath = path.resolve("./");
+const htmlData = pug.renderFile(rootPath+'/app/views/pdfview.pug', {
+  baseUrl: baseUrl,
+  data: checkId,
+  companyname:company_details.companyname,
+  logo:logo
+});
+
+var html = htmlData;
+var options = { format: 'A4', orientation: "portrait" };  
+
+let updateData = {
+  filename : fileName,
+  updatedby:req.body.data.updatedby, 
+ // status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
+ updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
 }
+   let update = await masters.common_update('policy', updateData, {id:id}); 
+pdf.create(html, options).toFile(pdfPath, function(err, response) {
+ // final_data = '';
+  if (err) return console.log(err);
+  const downloadLink = __appBaseUrl+'api/user/downloadpolicyPdfFile/'+fileName;
+  final_data.url = downloadLink;
+ update =  masters.common_update('policy', {"pdflink":downloadLink}, {id:id});
+  return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+});
+} else {
+
+const downloadLink = __appBaseUrl+'api/user/downloadpolicyPdfFile/'+file_name;
+final_data.url = downloadLink;
+   update =  masters.common_update('policy', {"pdflink":downloadLink}, {id:id});
+return res.status(200).json({status: true, message: 'download link received successfully', data: final_data});
+}
+},
+downloadpolicyPdfFile: async function(req, res) {
+  var fileName = req.params.filename;
+ const filePath = __uploadDir+'/reports/pdf/'+fileName;
+  res.sendFile(filePath);
+},
+pendingpolicylist:async function(req,res){
+  var approverid=req.body.data.userid===undefined ? NULL : req.body.data.userid;
+  var joins_apr = [{
+    table:'policy',
+    condition:['policy.id','=','policy_approver_mapping.policyid'],
+   jointype:'LEFT'
+  }]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['policy_approver_mapping.approverid']=approverid;
+  where_apr['policy_approver_mapping.status'] =1;
+  where_apr['policy_approver_mapping.approverstatus'] =0;
+  var columns_apr = ['policy_approver_mapping.approverid','policy_approver_mapping.status','policy_approver_mapping.approverstatus','policy_approver_mapping.policyid','policy.policyname'];
+  var orderby_apr = 'policy_approver_mapping.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('policy_approver_mapping', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+
+},
+approvedpolicylist: async function(req,res){
+  var approverid=req.body.data.userid===undefined ? NULL : req.body.data.userid;
+  var joins_apr = [{
+    table:'policy',
+    condition:['policy.id','=','policy_approver_mapping.policyid'],
+   jointype:'LEFT'
+  }]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['policy_approver_mapping.approverid']=approverid;
+  where_apr['policy_approver_mapping.status'] =1;
+  where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['policy_approver_mapping.approverid','policy_approver_mapping.status','policy_approver_mapping.approverstatus','policy_approver_mapping.policyid','policy.policyname'];
+  var orderby_apr = 'policy_approver_mapping.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('policy_approver_mapping', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+
+},
+Assettype: async function(req,res){
+  var finalData = {};
+  var where = {};
+  where['status'] = '1';
+  var orderby = 'createddate DESC';
+  var columns = ['id as value','AssetTypeName as label'];
+  var response = await masters.get_definecol_bytbl_cond_sorting(columns,'AssetManagement', where, orderby );
+  finalData.data = response; 
+  console.log(response)
+  return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
+},
+addAssetInventory:async function(req,res){
+  var AssetName=req.body.data.AssetName===undefined ? NULL : req.body.data.AssetName;
+  var Assettypeid=req.body.data.Assettypeid===undefined ? NULL : req.body.data.Assettypeid;
+  var AssetNumber=req.body.data.AssetNumber===undefined ? NULL : req.body.data.AssetNumber;
+  var serialnumber=req.body.data.serialnumber===undefined ? NULL : req.body.data.serialnumber;
+  var Owneremail=req.body.data.Owneremail===undefined ? NULL : req.body.data.Owneremail;
+  var departmentid=req.body.data.departmentid===undefined ? NULL : req.body.data.departmentid;
+  var inDate=req.body.data.inDate===undefined ? NULL : req.body.data.inDate;
+  var location=req.body.data.location===undefined ? NULL : req.body.data.location;
+  var dispostiondate=req.body.data.dispostiondate===undefined ? NULL : req.body.data.dispostiondate;
+  var dispositionmethod=req.body.data.dispositionmethod===undefined ? NULL : req.body.data.dispositionmethod;
+  var ConfidentialityRequirements=req.body.data.ConfidentialityRequirements===undefined ? NULL : req.body.data.ConfidentialityRequirements;
+  var IntegrityRequirements=req.body.data.IntegrityRequirements===undefined ? NULL : req.body.data.IntegrityRequirements;
+  var AvailabilityRequirements=req.body.data.AvailabilityRequirements===undefined ? NULL : req.body.data.AvailabilityRequirements;
+  var AmcEndDate=req.body.data.AmcEndDate===undefined ? NULL : req.body.data.AmcEndDate;
+  //var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  //var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+
+  //var status=req.body.data.status===undefined ? NULL : req.body.data.status;
+  var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  let insertData = {
+    AssetName:AssetName,
+    Assettypeid:Assettypeid,
+    AssetNumber:AssetNumber,
+    serialnumber:serialnumber,
+    Owneremail:Owneremail,
+    departmentid:departmentid,
+    inDate:inDate,
+    location:location,
+    dispostiondate:dispostiondate,
+    dispositionmethod:dispositionmethod,
+    ConfidentialityRequirements:ConfidentialityRequirements,
+    IntegrityRequirements:IntegrityRequirements,
+    AvailabilityRequirements:AvailabilityRequirements,
+    AmcEndDate:AmcEndDate,
+    //status:status,
+    createdby : createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+  var ins = await masters.common_insert('AssetInventory', insertData);
+  if(ins){
+    return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+  } else {
+   res.status(422).json({status: false, error: 'Please try Again'}); 
+  }
+},
 };
