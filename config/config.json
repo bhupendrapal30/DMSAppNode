@@ -1,8 +1,8 @@
 {
   "development": {
 "username": "root",
-"password": "Epee@123",
-"database": "epee",
+"password": "",
+"database": "dms",
 "host": "localhost",
     "dialect": "mysql",
     "logging": false,
