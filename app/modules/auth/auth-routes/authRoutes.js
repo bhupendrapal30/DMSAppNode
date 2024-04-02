@@ -12,7 +12,9 @@ const storage = multer.diskStorage({
 	},
 	filename: function (req, file, cb) {
 	  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-	  cb(null, file.originalname + '-' + uniqueSuffix)
+	 // cb(null, file.originalname + '-' + uniqueSuffix)
+	  cb(null, uniqueSuffix+file.originalname)
+	//  cb(null, file.originalname)
 	}
   })
   
@@ -33,10 +35,6 @@ router.get('/userlist',authMiddleware.checkToken,userController.userlist);
 router.get('/rolelist',authMiddleware.checkToken,userController.rolelist);
 router.post('/fileupload',authMiddleware.checkToken, userController.fileUpload);
 router.post('/fileupdate',authMiddleware.checkToken, userController.fileupdate);
-
-
-
-
 router.get('/defaultfilelist',userController.defaultfilelist); 
 router.post('/addrole',authMiddleware.checkToken,userController.addrole); 
 router.post('/updaterole',authMiddleware.checkToken,userController.updaterole);
@@ -45,11 +43,8 @@ router.post('/deleterole',authMiddleware.checkToken,userController.deleterole);
 router.post('/getuserbyid',authMiddleware.checkToken,userController.getuserbyId);
 router.post('/getrolebyid',authMiddleware.checkToken,userController.getrolebyId);
 router.post('/getPolicyId',authMiddleware.checkToken,userController.getPolicyId);
-
 router.get('/modulelist',authMiddleware.checkToken,userController.modulelist);
-
 router.get('/rolelistingdata',authMiddleware.checkToken,userController.rolelistingdata); 
-
 router.post('/addpermission',authMiddleware.checkToken,userController.addpermission);
 router.post('/updatepermission',authMiddleware.checkToken,userController.updatepermission);
 router.post('/permissionlist',authMiddleware.checkToken,userController.permissionlist);

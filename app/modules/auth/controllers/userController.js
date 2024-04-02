@@ -14,6 +14,7 @@ const fs = require('fs');
 var pdf = require('html-pdf');
 var path = require('path');
 var pug = require('pug');
+const { response } = require('express');
 //var fileHelper = require(process.cwd()+'/app/shared/helpers/file');
 //var pdf = require("pdf-creator-node");
 //const PDFDocument = require('pdfkit');
@@ -405,8 +406,7 @@ module.exports = {
         return res.status(200).json({status: true, message: ' list fetched successfully', data:finalData,statusCode:200});
       },
       addpermission: async function(req,res){
-        var roleid = req.body.data.roleid;
-        
+        var roleid = req.body.data.roleid; 
         var moduleid = req.body.data.moduleid;
         var addedit = req.body.data.addedit == true ?1:0;
         var view = req.body.data.view==true?1:0;
@@ -607,18 +607,8 @@ module.exports = {
 //       },
       downloadPdfFile: async function(req, res) {
        var fileName = req.params.filename;
-       //console.log(req.params);
-       // console.log(fileName);
-       // var fileName = '1.pdf';
       const filePath = __uploadDir+'/reports/pdf/'+fileName;
-      // var status = await fileHelper.download_any_file(filePath, req, res, false);
        res.sendFile(filePath);
-        //SHOW IN BROWSER
-       // var status = await fileHelper.show_pdf_file_browser(filePath, req, res, true);
-
-       // if(status == false) {
-           // return res.status(200).send('Error: no such file or directory')
-       // }
     },
     categorylist:async function(req,res){
       var finalData = {};
@@ -710,9 +700,6 @@ module.exports = {
       return res.status(200).json({status: true, message: ' list fetched successfully', data: response});
 
     },
-
-
-
     assigner:async function(req,res){
       var finalData = {};
       var where = {};
@@ -990,7 +977,7 @@ module.exports = {
       delapmwhereData['policyid'] = policyid;
        await masters.common_delete('policy_approver_mapping', delapmwhereData);
         approverid.forEach((element, index) =>  {
-
+        //console.log(`Current index: ${index}`);
         approverid = element;
         let updateData = {
           policyid : policyid,
@@ -1005,7 +992,7 @@ module.exports = {
     delowmwhereData['policyid'] = policyid;
     await masters.common_delete('policy_owner_mapping', delowmwhereData);
     ownerid.forEach((element, index) =>  {
-
+     //console.log(`Current index: ${index}`);
      owner_id = element;
      let updateData = {
        policyid : policyid,
@@ -1021,7 +1008,7 @@ module.exports = {
  delclusewhereData['policyid'] = policyid;
     await masters.common_delete('policycluse_mapping', delclusewhereData);
     cluse.forEach((element, index) =>  {
-
+     //console.log(`Current index: ${index}`);
      let clauseid = element.clauseid;
      let subclauseid = element.subclauseid;
      let updateData = {
@@ -1038,7 +1025,7 @@ module.exports = {
  delcontrolwhereData['policyid'] = policyid;
     await masters.common_delete('policycontral_mapping', delcontrolwhereData);
     control.forEach((element, index) =>  {
-
+     //console.log(`Current index: ${index}`);
      let subcontrolid = element.subcontrolid;
      let controlid = element.controlid;
      let updateData = {
@@ -1072,7 +1059,6 @@ module.exports = {
     
 
     },
-
     policyfileupdate:async function(req,res,next){
       var docs = req.file;
       var filename = docs.filename;
@@ -1515,7 +1501,6 @@ policyfileupdate:async function(req,res,next){
   
 },
 approverlist: async function(req,res){
-
   var finalData = {};
   var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
   var joins_apr = [{
@@ -1854,7 +1839,6 @@ approvedpolicylist: async function(req,res){
 
 },
 Assettype: async function(req,res){
-
   var finalData = {};
   var where = {};
   where['status'] = '1';
