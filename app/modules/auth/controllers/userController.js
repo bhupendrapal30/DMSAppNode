@@ -673,8 +673,32 @@ module.exports = {
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
 
     },
+    clauselist:async function(req,res){
+      var finalData = {};
 
-    
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;      var where = {};
+      where['status'] = '1';
+      where['frameworkid'] = frameworkid;
+      var orderby = 'id ASC';
+      var columns = ['id as value','clause as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Clause list fetched successfully', data: response});
+
+    },
+    subclauselist:async function(req,res){
+      var finalData = {};
+      var clause_id=req.body.data.clause_id===undefined ? NULL : req.body.data.clause_id;
+      var where = {};
+      where['status'] = '1';
+      where['clause_id'] = clause_id;
+      var orderby = 'id ASC';
+      var columns = ['id','sabclause as name'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'Sub Clause list fetched successfully', data: response});
+
+    },
     defaultfilelist:async function(req,res){
       var finalData = {};
       var where = {};
@@ -1050,11 +1074,9 @@ module.exports = {
     },
 
     policyfileupdate:async function(req,res,next){
-     // var docs = req.file;
-       var location = "test";
-       var filename = req.body.data.filename;
-       //var filename = req.body.data.policyType;
-     // var location = docs.path;
+      var docs = req.file;
+      var filename = docs.filename;
+      var location = docs.path;
       var policyType = req.body.policyType;
       var file_version = req.body.file_version;
       var description = req.body.description;
@@ -1096,7 +1118,7 @@ module.exports = {
        return res.status(400).json({ status: false, message: ' details not found'});
   } 
    },
-    policylist: async function(req,res){
+   policylist: async function(req,res){
     var finalData = {};
     var where = {};
     where['status'] = '1';
@@ -1138,10 +1160,7 @@ module.exports = {
   return res.status(200).json({ status: true, message: 'Permisssion List fetched successfully', data: result, statusCode: 200});
   },
   
-  
-
-addtraining: async function(req,res,next){
-
+  addtraining: async function(req,res,next){
     var docs = req.file;
     console.log(docs);
     if(docs){
@@ -1245,8 +1264,7 @@ addtraining: async function(req,res,next){
     finalData.data = response;
     return res.status(200).json({status: true, message: 'fetched successfully', data:finalData,statusCode:200});
   },
-
-   policydetails: async function(req,res){
+  policydetails: async function(req,res){
     var policyid=req.body.data.policyid===undefined ? NULL : req.body.data.policyid;
    var finalData = {};
     var where = {};
@@ -1770,8 +1788,7 @@ var html = htmlData;
 var options = { format: 'A4', orientation: "portrait" };  
 
 let updateData = {
-
-  filename : null,
+  filename : fileName,
   updatedby:req.body.data.updatedby, 
  // status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
  updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
@@ -1894,6 +1911,29 @@ addAssetInventory:async function(req,res){
    res.status(422).json({status: false, error: 'Please try Again'}); 
   }
 },
+AssetInventorydetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var joins_apr = [{
+    table:'Department',
+    condition:['AssetInventory.departmentid','=','Department.id'],
+   jointype:'LEFT'
+  }
+  ,{
+    table:'AssetManagement',
+    condition:['AssetInventory.Assettypeid','=','AssetManagement.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['AssetInventory.id']=id;
+  where_apr['AssetInventory.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['AssetInventory.AssetName','AssetInventory.Assettypeid','AssetInventory.AssetNumber','AssetInventory.serialnumber','AssetInventory.Owneremail','AssetInventory.departmentid','AssetInventory.inDate','AssetInventory.location','AssetInventory.dispostiondate','AssetInventory.dispositionmethod','AssetInventory.ConfidentialityRequirements','AssetInventory.IntegrityRequirements','AssetInventory.AvailabilityRequirements','AssetInventory.AmcEndDate','Department.departmentname','AssetManagement.AssetTypeName'];
+  var orderby_apr = 'AssetInventory.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('AssetInventory', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
 
   adddepartment: async function(req,res){
       console.log(req.body);
@@ -1972,5 +2012,102 @@ addAssetInventory:async function(req,res){
           return res.status(400).json({ status: false, message: ' details not found'});
         }
       },
-
+      AssetInventorydetails: async function(req,res){
+        var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+        var joins_apr = [{
+          table:'Department',
+          condition:['AssetInventory.departmentid','=','Department.id'],
+         jointype:'LEFT'
+        }
+        ,{
+          table:'AssetManagement',
+          condition:['AssetInventory.Assettypeid','=','AssetManagement.id'],
+         jointype:'LEFT'
+        }
+      ]
+        var where_apr = {}
+        var extra_whr = {}
+        var limit_arr = {}
+        where_apr['AssetInventory.id']=id;
+        where_apr['AssetInventory.status'] =1;
+        //where_apr['policy_approver_mapping.approverstatus'] =1;
+        var columns_apr = ['AssetInventory.AssetName','AssetInventory.Assettypeid','AssetInventory.AssetNumber','AssetInventory.serialnumber','AssetInventory.Owneremail','AssetInventory.departmentid','AssetInventory.inDate','AssetInventory.location','AssetInventory.dispostiondate','AssetInventory.dispositionmethod','AssetInventory.ConfidentialityRequirements','AssetInventory.IntegrityRequirements','AssetInventory.AvailabilityRequirements','AssetInventory.AmcEndDate','Department.departmentname','AssetManagement.AssetTypeName'];
+        var orderby_apr = 'AssetInventory.createddate DESC'
+        var approver_mapping =  await apiModel.get_joins_records('AssetInventory', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+        return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+    },
+    AssetInventorylist: async function(req,res){
+      var joins_apr = [{
+        table:'Department',
+        condition:['AssetInventory.departmentid','=','Department.id'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'AssetManagement',
+        condition:['AssetInventory.Assettypeid','=','AssetManagement.id'],
+       jointype:'LEFT'
+      }
+    ]
+      var where_apr = {}
+      var extra_whr = {}
+      var limit_arr = {}
+      //where_apr['AssetInventory.approverid']=id;
+      where_apr['AssetInventory.status'] =1;
+      //where_apr['policy_approver_mapping.approverstatus'] =1;
+      var columns_apr = ['AssetInventory.AssetName','AssetInventory.Assettypeid','AssetInventory.AssetNumber','AssetInventory.serialnumber','AssetInventory.Owneremail','AssetInventory.departmentid','AssetInventory.inDate','AssetInventory.location','AssetInventory.dispostiondate','AssetInventory.dispositionmethod','AssetInventory.ConfidentialityRequirements','AssetInventory.IntegrityRequirements','AssetInventory.AvailabilityRequirements','AssetInventory.AmcEndDate','Department.departmentname','AssetManagement.AssetTypeName'];
+      var orderby_apr = 'AssetInventory.createddate DESC'
+      var approver_mapping =  await apiModel.get_joins_records('AssetInventory', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+      return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+    
+    },
+    updateAssetInventory:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var AssetName=req.body.data.AssetName===undefined ? NULL : req.body.data.AssetName;
+      var Assettypeid=req.body.data.Assettypeid===undefined ? NULL : req.body.data.Assettypeid;
+      var AssetNumber=req.body.data.AssetNumber===undefined ? NULL : req.body.data.AssetNumber;
+      var serialnumber=req.body.data.serialnumber===undefined ? NULL : req.body.data.serialnumber;
+      var Owneremail=req.body.data.Owneremail===undefined ? NULL : req.body.data.Owneremail;
+      var departmentid=req.body.data.departmentid===undefined ? NULL : req.body.data.departmentid;
+      var inDate=req.body.data.inDate===undefined ? NULL : req.body.data.inDate;
+      var location=req.body.data.location===undefined ? NULL : req.body.data.location;
+      var dispostiondate=req.body.data.dispostiondate===undefined ? NULL : req.body.data.dispostiondate;
+      var dispositionmethod=req.body.data.dispositionmethod===undefined ? NULL : req.body.data.dispositionmethod;
+      var ConfidentialityRequirements=req.body.data.ConfidentialityRequirements===undefined ? NULL : req.body.data.ConfidentialityRequirements;
+      var IntegrityRequirements=req.body.data.IntegrityRequirements===undefined ? NULL : req.body.data.IntegrityRequirements;
+      var AvailabilityRequirements=req.body.data.AvailabilityRequirements===undefined ? NULL : req.body.data.AvailabilityRequirements;
+      var AmcEndDate=req.body.data.AmcEndDate===undefined ? NULL : req.body.data.AmcEndDate;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      let updateData = {
+        AssetName:AssetName,
+        Assettypeid:Assettypeid,
+        AssetNumber:AssetNumber,
+        serialnumber:serialnumber,
+        Owneremail:Owneremail,
+        departmentid:departmentid,
+        inDate:inDate,
+        location:location,
+        dispostiondate:dispostiondate,
+        dispositionmethod:dispositionmethod,
+        ConfidentialityRequirements:ConfidentialityRequirements,
+        IntegrityRequirements:IntegrityRequirements,
+        AvailabilityRequirements:AvailabilityRequirements,
+        AmcEndDate:AmcEndDate,
+        //status:status,
+        updatedby : updatedby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var column = ['id'];
+      let checkId = await masters.getSingleRecord('AssetInventory',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('AssetInventory', updateData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },      
 };

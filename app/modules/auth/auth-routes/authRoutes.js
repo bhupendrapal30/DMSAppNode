@@ -71,6 +71,10 @@ router.get('/department',userController.department);
 router.get('/reccurence',userController.reccurence);
 router.post('/createpolicy',userController.createpolicy);
 router.get('/frameworklist',userController.frameworklist);
+router.get('/controlist',userController.controlist);
+router.get('/subcontrolist',userController.subcontrolist);
+router.post('/cratepolicyowner',userController.cratepolicyowner);
+router.post('/cratepolicyapprover',userController.cratepolicyapprover);
 router.post('/policyupdate',userController.policyupdate);
 router.post('/policyfileupdate',upload.single('filename'),userController.policyfileupdate);
 router.post('/controlist',userController.controlist);
@@ -97,8 +101,8 @@ router.get('/traininglist',userController.traininglist);
 router.post('/traininupdate',upload.single('trainingfile'),userController.traininupdate);
 router.get('/trainingdetail',userController.trainingdetail);
 router.post('/policydetails',userController.policydetails);
-
-
+router.get('/approverlist',userController.approverlist);
+router.get('/approvepolicy',userController.approvepolicy);
 router.post('/addquiz',userController.addquiz);
 router.get('/quizlist',userController.quizlist);
 router.get('/quizdetails',userController.quizdetails);
@@ -110,11 +114,12 @@ router.post('/questionupdate',userController.questionupdate);
 router.get('/quizfilter',userController.quizfilter);
 router.post('/downloadpolicy',userController.downloadpolicy);
 router.get('/downloadpolicyPdfFile/:filename',userController.downloadpolicyPdfFile);
-
+router.post('/pendingpolicylist',userController.pendingpolicylist);
+router.post('/approvedpolicylist',userController.approvedpolicylist);
 router.get('/Assettype',userController.Assettype);
 router.post('/addAssetInventory',userController.addAssetInventory);
-
-router.get('/Assettype',userController.Assettype);
-router.post('/addAssetInventory',userController.addAssetInventory);
+router.get('/AssetInventorylist',userController.AssetInventorylist);
+router.get('/AssetInventorydetails',userController.AssetInventorydetails);
+router.post('/updateAssetInventory',userController.updateAssetInventory);
 
 module.exports = router;
