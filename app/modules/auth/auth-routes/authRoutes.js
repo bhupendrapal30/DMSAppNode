@@ -116,5 +116,4 @@ router.post('/addAssetInventory',userController.addAssetInventory);
 router.get('/AssetInventorylist',userController.AssetInventorylist);
 router.get('/AssetInventorydetails',userController.AssetInventorydetails);
 router.post('/updateAssetInventory',userController.updateAssetInventory);
-
 module.exports = router;
