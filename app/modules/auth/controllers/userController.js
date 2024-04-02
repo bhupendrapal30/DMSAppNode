@@ -1934,7 +1934,7 @@ AssetInventorydetails: async function(req,res){
   var orderby_apr = 'AssetInventory.createddate DESC'
   var approver_mapping =  await apiModel.get_joins_records('AssetInventory', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
   return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
-
+},
   adddepartment: async function(req,res){
       console.log(req.body);
       let checkId = await masters.check_exist('department', {departmentname:req.body.departmentname,status:'1'});
