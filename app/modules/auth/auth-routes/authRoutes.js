@@ -12,7 +12,9 @@ const storage = multer.diskStorage({
 	},
 	filename: function (req, file, cb) {
 	  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-	  cb(null, file.originalname + '-' + uniqueSuffix)
+	 // cb(null, file.originalname + '-' + uniqueSuffix)
+	  cb(null, uniqueSuffix+file.originalname)
+	//  cb(null, file.originalname)
 	}
   })
   
@@ -33,10 +35,6 @@ router.get('/userlist',authMiddleware.checkToken,userController.userlist);
 router.get('/rolelist',authMiddleware.checkToken,userController.rolelist);
 router.post('/fileupload',authMiddleware.checkToken, userController.fileUpload);
 router.post('/fileupdate',authMiddleware.checkToken, userController.fileupdate);
-
-
-
-
 router.get('/defaultfilelist',userController.defaultfilelist); 
 router.post('/addrole',authMiddleware.checkToken,userController.addrole); 
 router.post('/updaterole',authMiddleware.checkToken,userController.updaterole);
@@ -45,11 +43,8 @@ router.post('/deleterole',authMiddleware.checkToken,userController.deleterole);
 router.post('/getuserbyid',authMiddleware.checkToken,userController.getuserbyId);
 router.post('/getrolebyid',authMiddleware.checkToken,userController.getrolebyId);
 router.post('/getPolicyId',authMiddleware.checkToken,userController.getPolicyId);
-
 router.get('/modulelist',authMiddleware.checkToken,userController.modulelist);
-
 router.get('/rolelistingdata',authMiddleware.checkToken,userController.rolelistingdata); 
-
 router.post('/addpermission',authMiddleware.checkToken,userController.addpermission);
 router.post('/updatepermission',authMiddleware.checkToken,userController.updatepermission);
 router.post('/permissionlist',authMiddleware.checkToken,userController.permissionlist);
@@ -71,6 +66,10 @@ router.get('/department',userController.department);
 router.get('/reccurence',userController.reccurence);
 router.post('/createpolicy',userController.createpolicy);
 router.get('/frameworklist',userController.frameworklist);
+router.get('/controlist',userController.controlist);
+router.get('/subcontrolist',userController.subcontrolist);
+router.post('/cratepolicyowner',userController.cratepolicyowner);
+router.post('/cratepolicyapprover',userController.cratepolicyapprover);
 router.post('/policyupdate',userController.policyupdate);
 router.post('/policyfileupdate',upload.single('filename'),userController.policyfileupdate);
 router.post('/controlist',userController.controlist);
@@ -97,8 +96,8 @@ router.get('/traininglist',userController.traininglist);
 router.post('/traininupdate',upload.single('trainingfile'),userController.traininupdate);
 router.get('/trainingdetail',userController.trainingdetail);
 router.post('/policydetails',userController.policydetails);
-
-
+router.get('/approverlist',userController.approverlist);
+router.get('/approvepolicy',userController.approvepolicy);
 router.post('/addquiz',userController.addquiz);
 router.get('/quizlist',userController.quizlist);
 router.get('/quizdetails',userController.quizdetails);
@@ -110,11 +109,12 @@ router.post('/questionupdate',userController.questionupdate);
 router.get('/quizfilter',userController.quizfilter);
 router.post('/downloadpolicy',userController.downloadpolicy);
 router.get('/downloadpolicyPdfFile/:filename',userController.downloadpolicyPdfFile);
-
+router.post('/pendingpolicylist',userController.pendingpolicylist);
+router.post('/approvedpolicylist',userController.approvedpolicylist);
 router.get('/Assettype',userController.Assettype);
 router.post('/addAssetInventory',userController.addAssetInventory);
-
-router.get('/Assettype',userController.Assettype);
-router.post('/addAssetInventory',userController.addAssetInventory);
+router.get('/AssetInventorylist',userController.AssetInventorylist);
+router.get('/AssetInventorydetails',userController.AssetInventorydetails);
+router.post('/updateAssetInventory',userController.updateAssetInventory);
 
 module.exports = router;
