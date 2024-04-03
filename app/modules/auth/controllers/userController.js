@@ -1105,7 +1105,7 @@ module.exports = {
   } 
    },
   
-    policylist: async function(req,res){
+policylist: async function(req,res){
     var finalData = {};
     var where = {};
     where['status'] = '1';
@@ -1114,7 +1114,6 @@ module.exports = {
    // var response = await masters.get_definecol_bytbl_cond_sorting(columns,'default_files', where, orderby );
    // finalData.data = response; 
    // return res.status(200).json({status: true, message: ' list fetched successfully', data: finalData});
-
     var joins = [
       {
           table: 'framework as framework',
@@ -1138,76 +1137,15 @@ module.exports = {
 }
   ];
   var orderby = 'policy.createddate DESC';
-
   var where = {'policy.status':1};
-
   var extra_whr = '';
   var limit_arr = '';
   //var columns = ['default_files.id','default_files.pdflink','default_files.title','default_files.file_version','default_files.category_id','default_files.filename','default_files.location','default_files.description','default_files.status','policycategory.name as categoryname','standard.name as standardname'];
   //    var limit_arr = { 'limit': 10, 'offset': 1 };
   var result = await apiModel.get_joins_records('policy', columns, joins, where, orderby, extra_whr, limit_arr);
-
-  var joins_apr = [{
-    table:'users',
-    condition:['policy_approver_mapping.approverid','=','users.id'],
-   jointype:'LEFT'
-  }]
-  var where_apr = {}
-  where_apr['policy_approver_mapping.policyid']=policyid;
-  where_apr['policy_approver_mapping.status'] =1;
-  var columns_apr = ['users.fname','users.lname','policy_approver_mapping.approverid'];
-  var orderby_apr = 'policy_approver_mapping.createddate DESC'
-  var approver_mapping =  await apiModel.get_joins_records('policy_approver_mapping', columns_apr, joins_apr, where_apr, orderby_apr, extra_whr, limit_arr);
   
-  var joins_own = [{
-    table:'users',
-    condition:['policy_owner_mapping.ownerid','=','users.id'],
-   jointype:'LEFT'
-  }]
-  var where_own = {}
-  where_own['policy_owner_mapping.policyid']=policyid;
-  where_own['policy_owner_mapping.status'] =1;
-  var columns_own = ['users.fname','users.lname','policy_owner_mapping.ownerid'];
-  var orderby_own= 'policy_owner_mapping.createddate DESC'
-  var owner_mapping =  await apiModel.get_joins_records('policy_owner_mapping', columns_own, joins_own, where_own, orderby_own, '', '');
-  
-  var joins_clause = [{
-    table:'clause',
-    condition:['policycluse_mapping.clauseid','=','clause.id'],
-   jointype:'LEFT'
-  },{
-    table:'sub_clause',
-    condition:['policycluse_mapping.subclauseid','=','sub_clause.id'],
-   jointype:'LEFT'
-  }]
-  var where_clause = {}
-  where_clause['policycluse_mapping.policyid']=policyid;
-  where_clause['policycluse_mapping.status'] =1;
-  var columns_clause = ['policycluse_mapping.clauseid','policycluse_mapping.subclauseid','clause.clause','sub_clause.sabclause'];
-  var orderby_clause= 'policycluse_mapping.createddate DESC'
-  var clause_mapping =  await apiModel.get_joins_records('policycluse_mapping', columns_clause, joins_clause, where_clause, orderby_clause, '', '');
-  
-  var joins_control = [{
-    table:'control',
-    condition:['policycontral_mapping.controlid','=','control.id'],
-   jointype:'LEFT'
-  },{
-    table:'subcontrol',
-    condition:['policycontral_mapping.subcontrolid','=','subcontrol.id'],
-   jointype:'LEFT'
-  }]
-  var where_control = {}
-  where_control['policycontral_mapping.policyid']=policyid;
-  where_control['policycontral_mapping.status'] =1;
-  var columns_control = ['policycontral_mapping.controlid','policycontral_mapping.subcontrolid','control.name as controlname','subcontrol.name as subcontrolname'];
-  var orderby_control= 'policycontral_mapping.createddate DESC'
-  var control_mapping =  await apiModel.get_joins_records('policycontral_mapping', columns_control, joins_control, where_control, orderby_control, '', '');
-  
-
-  return res.status(200).json({ status: true, message: 'fetched successfully', data: result,'approver_mapping':approver_mapping,'owner_mapping':owner_mapping,'cluse_mapping':clause_mapping,'control_mapping':control_mapping, statusCode: 200});
-  
-},
-  
+  return res.status(200).json({ status: true, message: 'Permisssion List fetched successfully', data: result, statusCode: 200});
+  },
   addtraining: async function(req,res,next){
     var docs = req.file;
     console.log(docs);
