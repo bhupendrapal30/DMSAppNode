@@ -1060,12 +1060,12 @@ module.exports = {
 
     },
     policyfileupdate:async function(req,res,next){
-      var docs = req.file;
-      var filename = docs.filename;
-      var location = docs.path;
-      var policyType = req.body.policyType;
-      var file_version = req.body.file_version;
-      var description = req.body.description;
+     // var docs = req.file;
+      var filename = req.body.data.filename;
+      var location = "test";
+      var policyType = req.body.data.policyType;
+      var file_version = req.body.data.file_version;
+      var description = req.body.data.description;
       var optional_description = req.body.optional_description;
       var policyid = req.body.policyid;
      var column = ['id','file_version'];
