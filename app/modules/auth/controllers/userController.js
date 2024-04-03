@@ -1067,7 +1067,7 @@ module.exports = {
       var file_version = req.body.data.file_version;
       var description = req.body.data.description;
       var optional_description = req.body.optional_description;
-      var policyid = req.body.policyid;
+      var policyid = req.body.data.policyid;
      var column = ['id','file_version'];
    let checkId = await masters.getSingleRecord('policy',column, {id:policyid}); 
      if(checkId){
