@@ -1059,7 +1059,7 @@ module.exports = {
     
 
     },
-    policyfileupdate:async function(req,res,next){
+    policyfileupdate:async function(req,res){
      // var docs = req.file;
       var filename = req.body.data.filename;
       var location = "test";

@@ -71,7 +71,7 @@ router.get('/subcontrolist',userController.subcontrolist);
 router.post('/cratepolicyowner',userController.cratepolicyowner);
 router.post('/cratepolicyapprover',userController.cratepolicyapprover);
 router.post('/policyupdate',userController.policyupdate);
-router.post('/policyfileupdate',upload.single('filename'),userController.policyfileupdate);
+router.post('/policyfileupdate',userController.policyfileupdate);
 router.post('/controlist',userController.controlist);
 router.post('/subcontrolist',userController.subcontrolist);
 router.post('/getPolicyById',userController.getPolicyById);
