@@ -1992,5 +1992,67 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },      
+    }, 
+    addfunctiongroup:async function(req,res){
+      var functionalgroupname=req.body.data.functionalgroupname===undefined ? NULL : req.body.data.functionalgroupname;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        functionalgroupname:functionalgroupname,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('functiongroup', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    functiongrouplist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'functionalgroupname'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'functiongroup', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    functiongroupdetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'functionalgroupname'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'functiongroup', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    functiongroupupdate: async function(req,res){
+      
+      var functionalgroupname=req.body.data.functionalgroupname===undefined ? NULL : req.body.data.functionalgroupname;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        functionalgroupname:functionalgroupname,
+        updatedby : updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('functiongroup',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('functiongroup', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },     
 };

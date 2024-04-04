@@ -71,7 +71,7 @@ router.get('/subcontrolist',userController.subcontrolist);
 router.post('/cratepolicyowner',userController.cratepolicyowner);
 router.post('/cratepolicyapprover',userController.cratepolicyapprover);
 router.post('/policyupdate',userController.policyupdate);
-router.post('/policyfileupdate',userController.policyfileupdate);
+router.post('/policyfileupdate',upload.single('filename'),userController.policyfileupdate);
 router.post('/controlist',userController.controlist);
 router.post('/subcontrolist',userController.subcontrolist);
 router.post('/getPolicyById',userController.getPolicyById);
@@ -116,5 +116,9 @@ router.post('/addAssetInventory',userController.addAssetInventory);
 router.get('/AssetInventorylist',userController.AssetInventorylist);
 router.get('/AssetInventorydetails',userController.AssetInventorydetails);
 router.post('/updateAssetInventory',userController.updateAssetInventory);
+router.post('/addfunctiongroup',userController.addfunctiongroup);
+router.get('/functiongrouplist',userController.functiongrouplist);
+router.get('/functiongroupdetails',userController.functiongroupdetails);
+router.post('/functiongroupupdate',userController.functiongroupupdate);
 
 module.exports = router;
