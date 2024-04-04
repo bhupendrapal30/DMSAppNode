@@ -120,5 +120,9 @@ router.post('/addfunctiongroup',userController.addfunctiongroup);
 router.get('/functiongrouplist',userController.functiongrouplist);
 router.get('/functiongroupdetails',userController.functiongroupdetails);
 router.post('/functiongroupupdate',userController.functiongroupupdate);
+router.post('/addframework',authMiddleware.checkToken,userController.addframework);
+router.get('/frameworklist',authMiddleware.checkToken,userController.frameworklist);
+router.get('/frameworkdetails',authMiddleware.checkToken,userController.frameworkdetails);
+router.post('/frameworkupdate',authMiddleware.checkToken,userController.frameworkupdate);
 
 module.exports = router;
