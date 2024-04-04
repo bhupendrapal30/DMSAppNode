@@ -777,10 +777,10 @@ module.exports = {
         createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
       var ins = await masters.common_insert('policy', insertData);
+      console.log(ins);
       if(ins){
- insertData.policyid =ins;
-
-        return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertId:ins,statusCode:200});
+         insertData.policyid =ins;
+         return res.status(200).json({ status: true, message: 'data get successfully', data:insertData,insertId:ins,statusCode:200});
       } else {
        res.status(422).json({status: false, error: 'Please check the mobile or password'}); 
       }
@@ -1059,51 +1059,7 @@ module.exports = {
     
 
     },
-    policyfileupdate:async function(req,res){
-     // var docs = req.file;
-      var filename = req.body.data.filename;
-      var location = "test";
-      var policyType = req.body.data.policyType;
-      var file_version = req.body.data.file_version;
-      var description = req.body.data.description;
-      var optional_description = req.body.optional_description;
-      var policyid = req.body.data.policyid;
-     var column = ['id','file_version'];
-   let checkId = await masters.getSingleRecord('policy',column, {id:policyid}); 
-     if(checkId){
-       let updateData = {
-        policyType : policyType,
-        file_version:file_version,
-        description:description, 
-        optional_description:optional_description,
-        filename:filename,
-        location:location
-
-     }
-       let update = await masters.common_update('policy', updateData, {id:policyid});
-        if(update){
-        //  let insertData_version = {
-        //    default_id : checkId.id,
-        //    filename:checkId.filename, 
-        //    location:checkId.location,
-        //    description:checkId.description, 
-        //    category_id:checkId.category_id,
-        //    standard_id : checkId.standard_id,
-        //    title:checkId.title,
-        //    pdflink:checkId.pdflink,
-        //    status : req.body.status,
-        //    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        //  }
-        //  var ins_version = await masters.common_insert('default_files_version', insertData_version);
-          
-         return res.status(200).json({ status: true, message: 'data get successfully', data:updateData,statusCode:200});
-        } else {
-          return res.status(400).json({ status: false, message: 'data not updated'});
-        }
-    }else{
-       return res.status(400).json({ status: false, message: ' details not found'});
-  } 
-   },
+   
   
 policylist: async function(req,res){
     var finalData = {};
@@ -1323,7 +1279,7 @@ policylist: async function(req,res){
   var where_clause = {}
   where_clause['policycluse_mapping.policyid']=policyid;
   where_clause['policycluse_mapping.status'] =1;
-  var columns_clause = ['policycluse_mapping.clauseid','policycluse_mapping.subclauseid','clause.clause','sub_clause.sabclause'];
+  var columns_clause = ['policycluse_mapping.clauseid','policycluse_mapping.clauseid as clause_id','policycluse_mapping.subclauseid','clause.clause','sub_clause.sabclause'];
   var orderby_clause= 'policycluse_mapping.createddate DESC'
   var clause_mapping =  await apiModel.get_joins_records('policycluse_mapping', columns_clause, joins_clause, where_clause, orderby_clause, '', '');
   
@@ -1672,7 +1628,7 @@ var html = htmlData;
 var options = { format: 'A4', orientation: "portrait" };  
 
 let updateData = {
-  filename : fileName,
+  filename : null,
   updatedby:req.body.data.updatedby, 
  // status : req.body.data.status===undefined ? checkId.status : req.body.data.status,
  updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
