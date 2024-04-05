@@ -124,5 +124,12 @@ router.post('/addframework',authMiddleware.checkToken,userController.addframewor
 router.get('/frameworklist',authMiddleware.checkToken,userController.frameworklist);
 router.get('/frameworkdetails',authMiddleware.checkToken,userController.frameworkdetails);
 router.post('/frameworkupdate',authMiddleware.checkToken,userController.frameworkupdate);
-
+router.post('/addcluse',authMiddleware.checkToken,userController.addcluse);
+router.get('/cluselist',authMiddleware.checkToken,userController.cluselist);
+router.get('/clusedetails',authMiddleware.checkToken,userController.clusedetails);
+router.post('/cluseupdate',authMiddleware.checkToken,userController.cluseupdate);
+router.post('/addsubcluse',authMiddleware.checkToken,userController.addsubcluse);
+router.get('/subcluselist',authMiddleware.checkToken,userController.subcluselist);
+router.get('/subclusedetails',authMiddleware.checkToken,userController.subclusedetails);
+router.post('/subcluseupdate',authMiddleware.checkToken,userController.subcluseupdate);
 module.exports = router;

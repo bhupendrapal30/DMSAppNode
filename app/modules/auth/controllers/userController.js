@@ -2072,5 +2072,141 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },     
+    },  
+    addcluse:async function(req,res){
+      var clause=req.body.data.clause===undefined ? NULL : req.body.data.clause;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        clause:clause,
+        createdby : createdby,
+        frameworkid:frameworkid,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('clause', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    cluselist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'clause','frameworkid'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    clusedetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'clause','frameworkid'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    cluseupdate: async function(req,res){
+      
+      var clause=req.body.data.clause===undefined ? NULL : req.body.data.clause;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        clause:clause,
+        updatedby : updatedby,
+        frameworkid:frameworkid,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('clause',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('clause', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },   
+    addsubcluse:async function(req,res){
+      var sabclause=req.body.data.sabclause===undefined ? NULL : req.body.data.sabclause;
+      var clause_id=req.body.data.clause_id===undefined ? NULL : req.body.data.clause_id;
+      var standard_id=req.body.data.standard_id===undefined ? NULL : req.body.data.standard_id;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        clause_id:clause_id,
+        createdby : createdby,
+        standard_id:standard_id,
+        sabclause:sabclause,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('sub_clause', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    subcluselist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'clause_id','standard_id','sabclause'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    subclusedetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'clause_id','standard_id','sabclause'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    subcluseupdate: async function(req,res){
+      
+      var sabclause=req.body.data.sabclause===undefined ? NULL : req.body.data.sabclause;
+      var clause_id=req.body.data.clause_id===undefined ? NULL : req.body.data.clause_id;
+      var standard_id=req.body.data.standard_id===undefined ? NULL : req.body.data.standard_id;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        clause_id:clause_id,
+        updatedby : updatedby,
+        standard_id:standard_id,
+        sabclause:sabclause,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('sub_clause',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('sub_clause', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },             
 };
