@@ -2095,7 +2095,7 @@ AssetInventorydetails: async function(req,res){
       var where = {};
       where['status'] = '1';
       var orderby = 'id ASC';
-      var columns = ['id', 'clause','frameworkid'];
+      var columns = ['id', 'clause','frameworkid','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
@@ -2108,7 +2108,7 @@ AssetInventorydetails: async function(req,res){
       where['id'] = id;
       where['status'] = '1';
       var orderby = 'id ASC';
-      var columns = ['id', 'clause','frameworkid'];
+      var columns = ['id', 'clause','frameworkid','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
@@ -2163,7 +2163,7 @@ AssetInventorydetails: async function(req,res){
       var where = {};
       where['status'] = '1';
       var orderby = 'id ASC';
-      var columns = ['id', 'clause_id','standard_id','sabclause'];
+      var columns = ['id', 'clause_id','standard_id','sabclause','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
@@ -2176,7 +2176,7 @@ AssetInventorydetails: async function(req,res){
       where['id'] = id;
       where['status'] = '1';
       var orderby = 'id ASC';
-      var columns = ['id', 'clause_id','standard_id','sabclause'];
+      var columns = ['id', 'clause_id','standard_id','sabclause','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'sub_clause', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
@@ -2208,5 +2208,141 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },             
+    }, 
+    addcontrol:async function(req,res){
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        name:name,
+        createdby : createdby,
+        frameworkid:frameworkid,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('control', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    controllist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'name','frameworkid','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'control', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    controldetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'name','frameworkid','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'control', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    controlupdate: async function(req,res){
+      
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        name:name,
+        updatedby : updatedby,
+        frameworkid:frameworkid,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('control',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('control', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    }, 
+    addsubcontrol:async function(req,res){
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var control_id=req.body.data.control_id===undefined ? NULL : req.body.data.control_id;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        control_id:control_id,
+        createdby : createdby,
+        frameworkid:frameworkid,
+        name:name,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('subcontrol', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    subcontrollist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'control_id','frameworkid','name','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'subcontrol', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    subcontroldetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'control_id','frameworkid','name','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'subcontrol', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    subcontrolupdate: async function(req,res){
+      
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var control_id=req.body.data.control_id===undefined ? NULL : req.body.data.control_id;
+      var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        name:name,
+        updatedby : updatedby,
+        frameworkid:frameworkid,
+        control_id:control_id,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('subcontrol',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('subcontrol', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },               
 };
