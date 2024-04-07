@@ -121,7 +121,7 @@ router.get('/functiongrouplist',userController.functiongrouplist);
 router.post('/functiongroupdetails',userController.functiongroupdetails);
 router.post('/functiongroupupdate',userController.functiongroupupdate);
 router.post('/addframework',authMiddleware.checkToken,userController.addframework);
-router.get('/frameworklist',authMiddleware.checkToken,userController.frameworklist);
+router.get('/frameworklists',authMiddleware.checkToken,userController.frameworklists);
 router.post('/frameworkdetails',authMiddleware.checkToken,userController.frameworkdetails);
 router.post('/frameworkupdate',authMiddleware.checkToken,userController.frameworkupdate);
 router.post('/addcluse',authMiddleware.checkToken,userController.addcluse);

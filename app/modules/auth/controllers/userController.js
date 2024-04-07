@@ -2026,12 +2026,12 @@ AssetInventorydetails: async function(req,res){
        res.status(422).json({status: false, error: 'Please try Again'}); 
       }
     },
-    frameworklist:async function(req,res){
+    frameworklists:async function(req,res){
       var finalData = {};
       var where = {};
       where['status'] = '1';
       var orderby = 'id ASC';
-      var columns = ['id', 'name'];
+      var columns = ['id', 'name','status'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'framework', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
@@ -2077,10 +2077,12 @@ AssetInventorydetails: async function(req,res){
       var clause=req.body.data.clause===undefined ? NULL : req.body.data.clause;
       var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
       var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      var status=req.body.data.status===undefined ? 1 : req.body.data.status;
       let insertData = {
         clause:clause,
         createdby : createdby,
         frameworkid:frameworkid,
+        status:status,
         createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
       var ins = await masters.common_insert('clause', insertData);
@@ -2119,10 +2121,12 @@ AssetInventorydetails: async function(req,res){
       var frameworkid=req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
       var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
       var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var status=req.body.data.status===undefined ? 1 : req.body.data.status;
       let updatedData = {
         clause:clause,
         updatedby : updatedby,
         frameworkid:frameworkid,
+        status:status,
         updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
            var column = ['id'];
