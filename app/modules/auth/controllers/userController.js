@@ -2103,6 +2103,17 @@ AssetInventorydetails: async function(req,res){
       return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
     
     },
+    cluselistdropdown:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id as value', 'clause as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
     clusedetails:async function(req,res){
       var id=req.body.data.id===undefined ? NULL : req.body.data.id;
       var finalData = {};

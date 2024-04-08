@@ -126,6 +126,7 @@ router.post('/frameworkdetails',authMiddleware.checkToken,userController.framewo
 router.post('/frameworkupdate',authMiddleware.checkToken,userController.frameworkupdate);
 router.post('/addcluse',authMiddleware.checkToken,userController.addcluse);
 router.get('/cluselist',authMiddleware.checkToken,userController.cluselist);
+router.get('/cluselistdropdown',authMiddleware.checkToken,userController.cluselistdropdown);
 router.post('/clusedetails',authMiddleware.checkToken,userController.clusedetails);
 router.post('/cluseupdate',authMiddleware.checkToken,userController.cluseupdate);
 router.post('/addsubcluse',authMiddleware.checkToken,userController.addsubcluse);
