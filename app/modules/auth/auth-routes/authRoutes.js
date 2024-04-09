@@ -141,4 +141,10 @@ router.post('/addsubcontrol',authMiddleware.checkToken,userController.addsubcont
 router.get('/subcontrollist',authMiddleware.checkToken,userController.subcontrollist);
 router.post('/subcontroldetails',authMiddleware.checkToken,userController.subcontroldetails);
 router.post('/subcontrolupdate',authMiddleware.checkToken,userController.subcontrolupdate);
+router.get('/riskcategoryidlist',userController.riskcategoryidlist);
+router.get('/vulnerabilitygroupidlist',userController.vulnerabilitygroupidlist);
+router.get('/vulnerabilitynameidlist',userController.vulnerabilitynameidlist);
+router.get('/threatnameidlist',userController.threatnameidlist);
+router.get('/riskowner',userController.riskowner);
+router.post('/addriskregister',userController.addriskregister);
 module.exports = router;

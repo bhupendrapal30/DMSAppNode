@@ -2359,5 +2359,120 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },               
+    },
+    riskcategoryidlist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'riskcategoryid ASC';
+      var columns = ['riskcategoryid as value','categoryname as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'RISKCATEGORYTABLE', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+
+    },
+    vulnerabilitygroupidlist:async function(req,res){
+      var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['riskcategoryid'] = riskcategoryid;
+      var orderby = 'Vulnerabilitygroupid ASC';
+      var columns = ['Vulnerabilitygroupid as value','VulnerabilitygroupName as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'VULNERABILITYGROUPTABLE', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    vulnerabilitynameidlist:async function(req,res){
+      var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+      var Riskcategoryid=req.body.data.Riskcategoryid===undefined ? NULL : req.body.data.Riskcategoryid;
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['Vulnerabilitygroupid'] = Vulnerabilitygroupid;
+      where['Riskcategoryid'] = Riskcategoryid;
+      var orderby = 'VulnerabilityNameid ASC';
+      var columns = ['VulnerabilityNameid as value','VulnerabilityName as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'VULNERABILITYNAME', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    threatnameidlist:async function(req,res){
+      var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+      var VulnerabilityNameid=req.body.data.VulnerabilityNameid===undefined ? NULL : req.body.data.VulnerabilityNameid;
+      var Riskcategoryid=req.body.data.Riskcategoryid===undefined ? NULL : req.body.data.Riskcategoryid;
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['Vulnerabilitygroupid'] = Vulnerabilitygroupid;
+      where['VulnerabilityNameid'] = VulnerabilityNameid;
+      where['Riskcategoryid'] = Riskcategoryid;
+      var orderby = 'Threatnameid ASC';
+      var columns = ['Threatnameid as value','ThreatName as label'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'THREATTABLE', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    riskowner:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      where['ownerflag'] = '1';
+      var orderby = 'id DESC';
+
+      var columns = ['id as value','fname as label','email'];
+
+      let checkId = await masters.get_definecol_bytbl_cond_sorting(columns,'users', where, orderby );
+      if(checkId){
+            return res.status(200).json({ status: true, message: 'data get successfully', data:checkId,statusCode:200});    
+      }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+      }
+    },
+    addriskregister:async function(req,res){
+      var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
+      var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+      var Vulnerabilitynameid=req.body.data.Vulnerabilitynameid===undefined ? NULL : req.body.data.Vulnerabilitynameid;
+      //var Vulnerabilityscore=req.body.data.Vulnerabilityscore===undefined ? NULL : req.body.data.Vulnerabilityscore;
+      var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
+     // var threatdescription=req.body.data.threatdescription===undefined ? NULL : req.body.data.threatdescription;
+      //var threatscore=req.body.data.threatscore===undefined ? NULL : req.body.data.threatscore;
+     // var Assettypeid=req.body.data.Assettypeid===undefined ? NULL : req.body.data.Assettypeid;
+     // var Assetscore=req.body.data.Assetscore===undefined ? NULL : req.body.data.Assetscore;
+      var departmentid=req.body.data.departmentid===undefined ? NULL : req.body.data.departmentid;
+    //  var Likelihoodscore=req.body.data.Likelihoodscore===undefined ? NULL : req.body.data.Likelihoodscore;
+    //  var inheritriskscore=req.body.data.inheritriskscore===undefined ? NULL : req.body.data.inheritriskscore;
+      var riskowneremail=req.body.data.riskowneremail===undefined ? NULL : req.body.data.riskowneremail;
+      //var riskstatus=req.body.data.riskstatus===undefined ? NULL : req.body.data.riskstatus;
+     // var riskassessmentdate=req.body.data.riskassessmentdate===undefined ? NULL : req.body.data.riskassessmentdate;
+      //var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+    
+      //var status=req.body.data.status===undefined ? NULL : req.body.data.status;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        riskcategoryid:riskcategoryid,
+        Vulnerabilitygroupid:Vulnerabilitygroupid,
+        Vulnerabilitynameid:Vulnerabilitynameid,
+       // Vulnerabilityscore:Vulnerabilityscore,
+        Threatnameid:Threatnameid,
+       // threatdescription:threatdescription,
+       // threatscore:threatscore,
+        //Assettypeid:Assettypeid,
+       // Assetscore:Assetscore,
+        departmentid:departmentid,
+       // Likelihoodscore:Likelihoodscore,
+       // inheritriskscore:inheritriskscore,
+        riskowneremail:riskowneremail,
+       // riskstatus:riskstatus,
+        //status:status,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('RISKREGISTER', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },          
 };
