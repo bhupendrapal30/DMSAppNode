@@ -2474,5 +2474,141 @@ AssetInventorydetails: async function(req,res){
       } else {
        res.status(422).json({status: false, error: 'Please try Again'}); 
       }
-    },          
+    }, 
+    addsurvey:async function(req,res){
+      var Surveyname=req.body.data.Surveyname===undefined ? NULL : req.body.data.Surveyname;
+      var description=req.body.data.description===undefined ? NULL : req.body.data.description;
+      var Totalquestion=req.body.data.Totalquestion===undefined ? NULL : req.body.data.Totalquestion;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        Surveyname:Surveyname,
+        createdby : createdby,
+        description:description,
+        Totalquestion:Totalquestion,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('Surveytable', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    surveylist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'Surveyname','description','Totalquestion','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'Surveytable', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    surveydetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'Surveyname','description','Totalquestion','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'Surveytable', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    surveyupdate: async function(req,res){
+      
+      var Surveyname=req.body.data.Surveyname===undefined ? NULL : req.body.data.Surveyname;
+      var description=req.body.data.description===undefined ? NULL : req.body.data.description;
+      var Totalquestion=req.body.data.Totalquestion===undefined ? NULL : req.body.data.Totalquestion;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        Surveyname:Surveyname,
+        updatedby : updatedby,
+        Totalquestion:Totalquestion,
+        description:description,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('Surveytable',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('Surveytable', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },
+    addSurveyQuestion:async function(req,res){
+      var Surveyid=req.body.data.Surveyid===undefined ? NULL : req.body.data.Surveyid;
+      var Question=req.body.data.Question===undefined ? NULL : req.body.data.Question;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        Surveyid:Surveyid,
+        createdby : createdby,
+        Question:Question,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('SurveyQuestiontable', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    SurveyQuestionlist:async function(req,res){
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'Surveyid','Question','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'SurveyQuestiontable', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    SurveyQuestiondetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['id'] = id;
+      where['status'] = '1';
+      var orderby = 'id ASC';
+      var columns = ['id', 'Surveyid','Question','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'SurveyQuestiontable', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    SurveyQuestionupdate: async function(req,res){
+      
+      var Surveyid=req.body.data.Surveyid===undefined ? NULL : req.body.data.Surveyid;
+      var Question=req.body.data.Question===undefined ? NULL : req.body.data.Question;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        Surveyid:Surveyid,
+        Question : Question,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['id'];
+      let checkId = await masters.getSingleRecord('SurveyQuestiontable',column, {id:id}); 
+      if(checkId){
+        let update = await masters.common_update('SurveyQuestiontable', updatedData, {id:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },                  
 };
