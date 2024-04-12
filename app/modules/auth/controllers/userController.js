@@ -2610,5 +2610,343 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },                  
+    },
+    addincidentdetails:async function(req,res){
+      var topic=req.body.data.topic===undefined ? NULL : req.body.data.topic;
+      var priority=req.body.data.priority===undefined ? NULL : req.body.data.priority;
+      var severity=req.body.data.severity===undefined ? NULL : req.body.data.severity;
+      var details=req.body.data.details===undefined ? NULL : req.body.data.details;
+      var affectddepartment=req.body.data.affectddepartment===undefined ? NULL : req.body.data.affectddepartment;
+      var reportedby=req.body.data.reportedby===undefined ? NULL : req.body.data.reportedby;
+      var reportedon=req.body.data.reportedon===undefined ? NULL : req.body.data.reportedon;
+      var assignedto=req.body.data.assignedto===undefined ? NULL : req.body.data.assignedto;
+      var assignedon=req.body.data.assignedon===undefined ? NULL : req.body.data.assignedon;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        topic:topic,
+        priority:priority,
+        severity:severity,
+        details:details,
+        affectddepartment:affectddepartment,
+        reportedby:reportedby,
+        reportedon:reportedon,
+        assignedto:assignedto,
+        assignedon:assignedon,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('INCIDENTDETAILS', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    incidentdetailslist:async function(req,res){ 
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'incidentid ASC';
+      var columns = ['incidentid', 'topic','priority','severity','details','affectddepartment','reportedby','reportedon','assignedto','assignedon'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'INCIDENTDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    incidentdetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['incidentid'] = id;
+      where['status'] = '1';
+      var orderby = 'incidentid ASC';
+      var columns = ['incidentid', 'topic','priority','severity','details','affectddepartment','reportedby','reportedon','assignedto','assignedon'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'INCIDENTDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    incidentdetailsnupdate: async function(req,res){
+      
+      var topic=req.body.data.topic===undefined ? NULL : req.body.data.topic;
+      var priority=req.body.data.priority===undefined ? NULL : req.body.data.priority;
+      var severity=req.body.data.severity===undefined ? NULL : req.body.data.severity;
+      var details=req.body.data.details===undefined ? NULL : req.body.data.details;
+      var affectddepartment=req.body.data.affectddepartment===undefined ? NULL : req.body.data.affectddepartment;
+      var reportedby=req.body.data.reportedby===undefined ? NULL : req.body.data.reportedby;
+      var reportedon=req.body.data.reportedon===undefined ? NULL : req.body.data.reportedon;
+      var assignedto=req.body.data.assignedto===undefined ? NULL : req.body.data.assignedto;
+      var assignedon=req.body.data.assignedon===undefined ? NULL : req.body.data.assignedon;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        topic:topic,
+        severity : severity,
+        priority:priority,
+        details:details,
+        affectddepartment:affectddepartment,
+        reportedby:reportedby,
+        reportedon:reportedon,
+        assignedto:assignedto,
+        assignedon:assignedon,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['incidentid'];
+      let checkId = await masters.getSingleRecord('INCIDENTDETAILS',column, {incidentid:id}); 
+      if(checkId){
+        let update = await masters.common_update('INCIDENTDETAILS', updatedData, {incidentid:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },
+    
+    addrootcauseanalysisdetails:async function(req,res){
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var rootcausedetails=req.body.data.rootcausedetails===undefined ? NULL : req.body.data.rootcausedetails;
+      var rootcauseanalysisdoneby=req.body.data.rootcauseanalysisdoneby===undefined ? NULL : req.body.data.rootcauseanalysisdoneby;
+      var rootcauseanalysisdoneon=req.body.data.rootcauseanalysisdoneon===undefined ? NULL : req.body.data.rootcauseanalysisdoneon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        incidentid:incidentid,
+        rootcausedetails:rootcausedetails,
+        rootcauseanalysisdoneby:rootcauseanalysisdoneby,
+        rootcauseanalysisdoneon:rootcauseanalysisdoneon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('ROOTCAUSEANALYSISDETAILS', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    rootcauseanalysisdetailslist:async function(req,res){ 
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'rootcauseid ASC';
+      var columns = ['rootcauseid', 'incidentid','rootcausedetails','rootcauseanalysisdoneby','rootcauseanalysisdoneon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'ROOTCAUSEANALYSISDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    rootcauseanalysisdetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['rootcauseid'] = id;
+      where['status'] = '1';
+      var orderby = 'rootcauseid ASC';
+      var columns = ['rootcauseid', 'incidentid','rootcausedetails','rootcauseanalysisdoneby','rootcauseanalysisdoneon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'ROOTCAUSEANALYSISDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    rootcauseanalysisdetailsupdate: async function(req,res){   
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var rootcausedetails=req.body.data.rootcausedetails===undefined ? NULL : req.body.data.rootcausedetails;
+      var rootcauseanalysisdoneby=req.body.data.rootcauseanalysisdoneby===undefined ? NULL : req.body.data.rootcauseanalysisdoneby;
+      var rootcauseanalysisdoneon=req.body.data.rootcauseanalysisdoneon===undefined ? NULL : req.body.data.rootcauseanalysisdoneon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        incidentid:incidentid,
+        rootcausedetails : rootcausedetails,
+        rootcauseanalysisdoneby:rootcauseanalysisdoneby,
+        rootcauseanalysisdoneon:rootcauseanalysisdoneon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['rootcauseid'];
+      let checkId = await masters.getSingleRecord('ROOTCAUSEANALYSISDETAILS',column, {rootcauseid:id}); 
+      if(checkId){
+        let update = await masters.common_update('ROOTCAUSEANALYSISDETAILS', updatedData, {rootcauseid:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    }, 
+    addcorrectiveactiondetails:async function(req,res){
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var correctiveactiondetails=req.body.data.correctiveactiondetails===undefined ? NULL : req.body.data.correctiveactiondetails;
+      var correctionactiontakenby=req.body.data.correctionactiontakenby===undefined ? NULL : req.body.data.correctionactiontakenby;
+      var correctiveactiontakenon=req.body.data.correctiveactiontakenon===undefined ? NULL : req.body.data.correctiveactiontakenon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        incidentid:incidentid,
+        correctiveactiondetails:correctiveactiondetails,
+        correctionactiontakenby:correctionactiontakenby,
+        correctiveactiontakenon:correctiveactiontakenon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('CORRECTIVEACTIONDETAILS', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    correctiveactiondetailslist:async function(req,res){ 
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'correctiveid ASC';
+      var columns = ['correctiveid', 'incidentid','correctiveactiondetails','correctionactiontakenby','correctiveactiontakenon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'CORRECTIVEACTIONDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    correctiveactiondetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['correctiveid'] = id;
+      where['status'] = '1';
+      var orderby = 'correctiveid ASC';
+      var columns = ['correctiveid', 'incidentid','correctiveactiondetails','correctionactiontakenby','correctiveactiontakenon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'CORRECTIVEACTIONDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    correctiveactiondetailsupdate: async function(req,res){   
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var correctiveactiondetails=req.body.data.correctiveactiondetails===undefined ? NULL : req.body.data.correctiveactiondetails;
+      var correctionactiontakenby=req.body.data.correctionactiontakenby===undefined ? NULL : req.body.data.correctionactiontakenby;
+      var correctiveactiontakenon=req.body.data.correctiveactiontakenon===undefined ? NULL : req.body.data.correctiveactiontakenon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        incidentid:incidentid,
+        correctiveactiondetails : correctiveactiondetails,
+        correctionactiontakenby:correctionactiontakenby,
+        correctiveactiontakenon:correctiveactiontakenon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['correctiveid'];
+      let checkId = await masters.getSingleRecord('CORRECTIVEACTIONDETAILS',column, {correctiveid:id}); 
+      if(checkId){
+        let update = await masters.common_update('CORRECTIVEACTIONDETAILS', updatedData, {correctiveid:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    }, 
+    addcorrectionActiondetails:async function(req,res){
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var correctionactiondetails=req.body.data.correctionactiondetails===undefined ? NULL : req.body.data.correctionactiondetails;
+      var correctionactiontakenby=req.body.data.correctionactiontakenby===undefined ? NULL : req.body.data.correctionactiontakenby;
+      var correctiveactiontakenon=req.body.data.correctiveactiontakenon===undefined ? NULL : req.body.data.correctiveactiontakenon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        incidentid:incidentid,
+        correctionactiondetails:correctionactiondetails,
+        correctionactiontakenby:correctionactiontakenby,
+        correctiveactiontakenon:correctiveactiontakenon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('CORRECTIONACTIONDETAILS', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    correctionActiondetailslist:async function(req,res){ 
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'correctionid ASC';
+      var columns = ['correctionid', 'incidentid','correctionactiondetails','correctionactiontakenby','correctiveactiontakenon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'CORRECTIONACTIONDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    correctionActiondetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['correctionid'] = id;
+      where['status'] = '1';
+      var orderby = 'correctionid ASC';
+      var columns = ['correctionid', 'incidentid','correctionactiondetails','correctionactiontakenby','correctiveactiontakenon','approvedby','approvedon','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'CORRECTIONACTIONDETAILS', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    correctionActionDetailsupdate: async function(req,res){   
+      var incidentid=req.body.data.incidentid===undefined ? NULL : req.body.data.incidentid;
+      var correctionactiondetails=req.body.data.correctionactiondetails===undefined ? NULL : req.body.data.correctionactiondetails;
+      var correctionactiontakenby=req.body.data.correctionactiontakenby===undefined ? NULL : req.body.data.correctionactiontakenby;
+      var correctiveactiontakenon=req.body.data.correctiveactiontakenon===undefined ? NULL : req.body.data.correctiveactiontakenon;
+      var approvedby=req.body.data.approvedby===undefined ? NULL : req.body.data.approvedby;
+      var approvedon=req.body.data.approvedon===undefined ? NULL : req.body.data.approvedon;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        incidentid:incidentid,
+        correctionactiondetails : correctionactiondetails,
+        correctionactiontakenby:correctionactiontakenby,
+        correctiveactiontakenon:correctiveactiontakenon,
+        approvedby:approvedby,
+        approvedon:approvedon,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['correctionid'];
+      let checkId = await masters.getSingleRecord('CORRECTIONACTIONDETAILS',column, {correctionid:id}); 
+      if(checkId){
+        let update = await masters.common_update('CORRECTIONACTIONDETAILS', updatedData, {correctionid:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },                          
 };
