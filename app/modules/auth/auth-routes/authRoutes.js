@@ -142,9 +142,9 @@ router.get('/subcontrollist',authMiddleware.checkToken,userController.subcontrol
 router.post('/subcontroldetails',authMiddleware.checkToken,userController.subcontroldetails);
 router.post('/subcontrolupdate',authMiddleware.checkToken,userController.subcontrolupdate);
 router.get('/riskcategoryidlist',userController.riskcategoryidlist);
-router.get('/vulnerabilitygroupidlist',userController.vulnerabilitygroupidlist);
-router.get('/vulnerabilitynameidlist',userController.vulnerabilitynameidlist);
-router.get('/threatnameidlist',userController.threatnameidlist);
+router.post('/vulnerabilitygroupidlist',userController.vulnerabilitygroupidlist);
+router.post('/vulnerabilitynameidlist',userController.vulnerabilitynameidlist);
+router.post('/threatnameidlist',userController.threatnameidlist);
 router.get('/riskowner',userController.riskowner);
 router.post('/addriskregister',userController.addriskregister);
 router.post('/addsurvey',authMiddleware.checkToken,userController.addsurvey);
