@@ -171,4 +171,8 @@ router.post('/addcorrectionActiondetails',authMiddleware.checkToken,userControll
 router.get('/correctionActiondetailslist',authMiddleware.checkToken,userController.correctionActiondetailslist);
 router.post('/correctionActiondetails',authMiddleware.checkToken,userController.correctionActiondetails);
 router.post('/correctionActionDetailsupdate',authMiddleware.checkToken,userController.correctionActionDetailsupdate);
+router.post('/addauditmanagement',authMiddleware.checkToken,userController.addauditmanagement);
+router.get('/auditmanagementlist',authMiddleware.checkToken,userController.auditmanagementlist);
+router.post('/auditmanagementdetails',authMiddleware.checkToken,userController.auditmanagementdetails);
+router.post('/auditmanagementupdate',authMiddleware.checkToken,userController.auditmanagementupdate);
 module.exports = router;

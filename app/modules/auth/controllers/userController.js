@@ -127,7 +127,7 @@ module.exports = {
     var extra_whr = '';
     var limit_arr = '';
     var columns = ['users.id', 'users.fname','users.lname','users.email','users.mobileNo','users.usertype','users.status','users.createddate','roles.name as usertypename'];
-    var limit_arr = { 'limit': 10, 'offset': 1 };
+    //var limit_arr = { 'limit': 10, 'offset': 1 };
     var result = await apiModel.get_joins_records('users', columns, joins, where, orderby, extra_whr, limit_arr);
     return res.status(200).json({ status: true, message: 'User List fetched successfully', data: result, statusCode: 200});
 
@@ -2948,5 +2948,91 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },                          
+    }, 
+    
+    addauditmanagement:async function(req,res){
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var standardid=req.body.data.standardid===undefined ? NULL : req.body.data.standardid;
+      var description=req.body.data.description===undefined ? NULL : req.body.data.description;
+      var auditstartdate=req.body.data.auditstartdate===undefined ? NULL : req.body.data.auditstartdate;
+      var auditenddate=req.body.data.auditenddate===undefined ? NULL : req.body.data.auditenddate;
+      var auditscopeperiodstartdate=req.body.data.auditscopeperiodstartdate===undefined ? NULL : req.body.data.auditscopeperiodstartdate;
+      var auditscopeperiodenddate = req.body.data.auditscopeperiodenddate===undefined ? NULL : req.body.data.auditscopeperiodenddate;
+      var createdby=req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+      let insertData = {
+        name:name,
+        standardid:standardid,
+        description:description,
+        auditstartdate:auditstartdate,
+        auditenddate:auditenddate,
+        auditscopeperiodstartdate:auditscopeperiodstartdate,
+        auditscopeperiodenddate:auditscopeperiodenddate,
+        createdby : createdby,
+        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+      var ins = await masters.common_insert('AUDITMANAGEMENT', insertData);
+      if(ins){
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+      } else {
+       res.status(422).json({status: false, error: 'Please try Again'}); 
+      }
+    },
+    auditmanagementlist:async function(req,res){ 
+      var finalData = {};
+      var where = {};
+      where['status'] = '1';
+      var orderby = 'auditid ASC';
+      var columns = ['auditid', 'name','standardid','description','auditstartdate','auditenddate','auditscopeperiodstartdate','auditscopeperiodenddate','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'AUDITMANAGEMENT', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    
+    },
+    auditmanagementdetails:async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var finalData = {};
+      var where = {};
+      where['auditid'] = id;
+      where['status'] = '1';
+      var orderby = 'auditid ASC';
+      var columns = ['auditid', 'name','standardid','description','auditstartdate','auditenddate','auditscopeperiodstartdate','auditscopeperiodenddate','status'];
+      var response = await masters.get_definecol_bytbl_cond_sorting(columns,'AUDITMANAGEMENT', where, orderby );
+      finalData.data = response; 
+      return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+    },
+    auditmanagementupdate: async function(req,res){   
+      var name=req.body.data.name===undefined ? NULL : req.body.data.name;
+      var standardid=req.body.data.standardid===undefined ? NULL : req.body.data.standardid;
+      var description=req.body.data.description===undefined ? NULL : req.body.data.description;
+      var auditstartdate=req.body.data.auditstartdate===undefined ? NULL : req.body.data.auditstartdate;
+      var auditenddate=req.body.data.auditenddate===undefined ? NULL : req.body.data.auditenddate;
+      var auditscopeperiodstartdate=req.body.data.auditscopeperiodstartdate===undefined ? NULL : req.body.data.auditscopeperiodstartdate;
+      var auditscopeperiodenddate = req.body.data.auditscopeperiodenddate===undefined ? NULL : req.body.data.auditscopeperiodenddate;
+      var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      let updatedData = {
+        name:name,
+        standardid : standardid,
+        description:description,
+        auditstartdate:auditstartdate,
+        auditenddate:auditenddate,
+        auditscopeperiodstartdate:auditscopeperiodstartdate,
+        auditscopeperiodenddate:auditscopeperiodenddate,
+        updatedby:updatedby,
+        updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+      }
+           var column = ['auditid'];
+      let checkId = await masters.getSingleRecord('AUDITMANAGEMENT',column, {auditid:id}); 
+      if(checkId){
+        let update = await masters.common_update('AUDITMANAGEMENT', updatedData, {auditid:id});
+         if(update){   
+          return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+         } else {
+           return res.status(400).json({ status: false, message: 'data not updated'});
+         }
+     }else{
+        return res.status(400).json({ status: false, message: ' details not found'});
+    } 
+    
+    },     
 };
