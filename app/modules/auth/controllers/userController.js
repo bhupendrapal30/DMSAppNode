@@ -3034,5 +3034,97 @@ AssetInventorydetails: async function(req,res){
         return res.status(400).json({ status: false, message: ' details not found'});
     } 
     
-    },     
+    }, 
+    riskdetails: async function(req,res){
+      var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+      var joins_apr = [{
+        table:'RISKCATEGORYTABLE',
+        condition:['RISKREGISTER.riskcategoryid','=','RISKCATEGORYTABLE.riskcategoryid'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'VULNERABILITYGROUPTABLE',
+        condition:['RISKREGISTER.Vulnerabilitygroupid','=','VULNERABILITYGROUPTABLE.Vulnerabilitygroupid'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'VULNERABILITYNAME',
+        condition:['RISKREGISTER.Vulnerabilitynameid','=','VULNERABILITYNAME.VulnerabilityNameid'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'THREATTABLE',
+        condition:['RISKREGISTER.Threatnameid','=','THREATTABLE.Threatnameid'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'ASSETTYPE',
+        condition:['RISKREGISTER.Assettypeid','=','ASSETTYPE.ASSETTYPEID'],
+       jointype:'LEFT'
+      }
+      ,{
+        table:'Department',
+        condition:['RISKREGISTER.departmentid','=','Department.id'],
+       jointype:'LEFT'
+      }
+    ]
+      var where_apr = {}
+      var extra_whr = {}
+      var limit_arr = {}
+      where_apr['RISKREGISTER.riskid']=id;
+      where_apr['RISKREGISTER.status'] =1;
+      //where_apr['policy_approver_mapping.approverstatus'] =1;
+      //,'THREATTABLE.ThreatName','ASSETTYPE.ASSETTYPENAME','Department.departmentname'
+      var columns_apr = ['RISKREGISTER.riskid','RISKREGISTER.riskcategoryid','RISKREGISTER.Vulnerabilitygroupid','RISKREGISTER.Vulnerabilitynameid','RISKREGISTER.Vulnerabilityscore','RISKREGISTER.Threatnameid','RISKREGISTER.threatdescription','RISKREGISTER.threatscore','RISKREGISTER.Assettypeid','RISKREGISTER.Assetscore','RISKREGISTER.departmentid','RISKREGISTER.Likelihoodscore','RISKREGISTER.inheritriskscore','RISKREGISTER.riskowneremail','RISKREGISTER.riskstatus','RISKREGISTER.riskassessmentdate','RISKREGISTER.riskassessmentdate','RISKREGISTER.Mvulnerabilityscore','RISKREGISTER.mthreatscore','RISKREGISTER.mlikelihoodscore','RISKREGISTER.residualriskscore','RISKREGISTER.residualriskscore','RISKREGISTER.status','RISKCATEGORYTABLE.categoryname','VULNERABILITYGROUPTABLE.VulnerabilitygroupName','VULNERABILITYNAME.VulnerabilityName','THREATTABLE.ThreatName','ASSETTYPE.ASSETTYPENAME','Department.departmentname'];
+     // var orderby_apr = 'AssetInventory.createddate DESC'
+      var orderby_apr = ''
+      var approver_mapping =  await apiModel.get_joins_records('RISKREGISTER', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+      return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+  },  
+  risklist: async function(req,res){
+   // var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+    var joins_apr = [{
+      table:'RISKCATEGORYTABLE',
+      condition:['RISKREGISTER.riskcategoryid','=','RISKCATEGORYTABLE.riskcategoryid'],
+     jointype:'LEFT'
+    }
+    ,{
+      table:'VULNERABILITYGROUPTABLE',
+      condition:['RISKREGISTER.Vulnerabilitygroupid','=','VULNERABILITYGROUPTABLE.Vulnerabilitygroupid'],
+     jointype:'LEFT'
+    }
+    ,{
+      table:'VULNERABILITYNAME',
+      condition:['RISKREGISTER.Vulnerabilitynameid','=','VULNERABILITYNAME.VulnerabilityNameid'],
+     jointype:'LEFT'
+    }
+    ,{
+      table:'THREATTABLE',
+      condition:['RISKREGISTER.Threatnameid','=','THREATTABLE.Threatnameid'],
+     jointype:'LEFT'
+    }
+    ,{
+      table:'ASSETTYPE',
+      condition:['RISKREGISTER.Assettypeid','=','ASSETTYPE.ASSETTYPEID'],
+     jointype:'LEFT'
+    }
+    ,{
+      table:'Department',
+      condition:['RISKREGISTER.departmentid','=','Department.id'],
+     jointype:'LEFT'
+    }
+  ]
+    var where_apr = {}
+    var extra_whr = {}
+    var limit_arr = {}
+   // where_apr['RISKREGISTER.riskid']=id;
+    where_apr['RISKREGISTER.status'] =1;
+    //where_apr['policy_approver_mapping.approverstatus'] =1;
+    //,'THREATTABLE.ThreatName','ASSETTYPE.ASSETTYPENAME','Department.departmentname'
+    var columns_apr = ['RISKREGISTER.riskid','RISKREGISTER.riskcategoryid','RISKREGISTER.Vulnerabilitygroupid','RISKREGISTER.Vulnerabilitynameid','RISKREGISTER.Vulnerabilityscore','RISKREGISTER.Threatnameid','RISKREGISTER.threatdescription','RISKREGISTER.threatscore','RISKREGISTER.Assettypeid','RISKREGISTER.Assetscore','RISKREGISTER.departmentid','RISKREGISTER.Likelihoodscore','RISKREGISTER.inheritriskscore','RISKREGISTER.riskowneremail','RISKREGISTER.riskstatus','RISKREGISTER.riskassessmentdate','RISKREGISTER.riskassessmentdate','RISKREGISTER.Mvulnerabilityscore','RISKREGISTER.mthreatscore','RISKREGISTER.mlikelihoodscore','RISKREGISTER.residualriskscore','RISKREGISTER.residualriskscore','RISKREGISTER.status','RISKCATEGORYTABLE.categoryname','VULNERABILITYGROUPTABLE.VulnerabilitygroupName','VULNERABILITYNAME.VulnerabilityName','THREATTABLE.ThreatName','ASSETTYPE.ASSETTYPENAME','Department.departmentname'];
+    var orderby_apr = 'RISKREGISTER.createddate DESC'
+    var orderby_apr = ''
+    var approver_mapping =  await apiModel.get_joins_records('RISKREGISTER', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+    return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},      
 };

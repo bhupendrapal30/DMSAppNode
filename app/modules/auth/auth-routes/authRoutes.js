@@ -175,4 +175,6 @@ router.post('/addauditmanagement',authMiddleware.checkToken,userController.addau
 router.get('/auditmanagementlist',authMiddleware.checkToken,userController.auditmanagementlist);
 router.post('/auditmanagementdetails',authMiddleware.checkToken,userController.auditmanagementdetails);
 router.post('/auditmanagementupdate',authMiddleware.checkToken,userController.auditmanagementupdate);
+router.post('/riskdetails',authMiddleware.checkToken,userController.riskdetails);
+router.get('/risklist',authMiddleware.checkToken,userController.risklist);
 module.exports = router;
