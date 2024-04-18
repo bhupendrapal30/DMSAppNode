@@ -177,4 +177,11 @@ router.post('/auditmanagementdetails',authMiddleware.checkToken,userController.a
 router.post('/auditmanagementupdate',authMiddleware.checkToken,userController.auditmanagementupdate);
 router.post('/riskdetails',authMiddleware.checkToken,userController.riskdetails);
 router.get('/risklist',authMiddleware.checkToken,userController.risklist);
+router.post('/inheritriskupdate',authMiddleware.checkToken,userController.inheritriskupdate);
+router.post('/inheritriskassistmentsdetails',authMiddleware.checkToken,userController.inheritriskassistmentsdetails);
+router.post('/addapplicablecontrol',authMiddleware.checkToken,userController.addapplicablecontrol);
+router.post('/applicablecontrollist',authMiddleware.checkToken,userController.applicablecontrollist);
+router.post('/addmitigation',authMiddleware.checkToken,userController.addmitigation);
+router.post('/mitigationlist',authMiddleware.checkToken,userController.mitigationlist);
+router.post('/addriskassistments',authMiddleware.checkToken,userController.addriskassistments);
 module.exports = router;

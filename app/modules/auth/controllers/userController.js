@@ -3126,5 +3126,212 @@ AssetInventorydetails: async function(req,res){
     var orderby_apr = ''
     var approver_mapping =  await apiModel.get_joins_records('RISKREGISTER', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
     return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
-},      
+}, 
+inheritriskupdate: async function(req,res){   
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
+  var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+  var VulnerabilityNameid=req.body.data.VulnerabilityNameid===undefined ? NULL : req.body.data.VulnerabilityNameid;
+  //var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
+  var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
+  var Threatscore = req.body.data.Threatscore===undefined ? NULL : req.body.data.Threatscore;
+  var Likelihoodscore=req.body.data.Likelihoodscore===undefined ? NULL : req.body.data.Likelihoodscore;
+  var inheritriskscore=req.body.data.inheritriskscore===undefined ? NULL : req.body.data.inheritriskscore;
+  let updatedData = {
+   // riskid : riskid,
+    riskcategoryid:riskcategoryid,
+    Vulnerabilitygroupid:Vulnerabilitygroupid,
+    VulnerabilityNameid:VulnerabilityNameid,
+    Threatnameid:Threatnameid,
+    //Threatdesciption:Threatdesciption,
+    Threatscore:Threatscore,
+    Likelihoodscore:Likelihoodscore,
+    inheritriskscore:inheritriskscore,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['riskid'];
+  let checkId = await masters.getSingleRecord('RISKREGISTER',column, {riskid:riskid}); 
+  if(checkId){
+    let update = await masters.common_update('RISKREGISTER', updatedData, {riskid:riskid});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data updated successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+  var ins = await masters.common_insert('RISKREGISTER', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  }
+} 
+},
+inheritriskassistmentsdetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var joins_apr = [{
+    table:'RISKCATEGORYTABLE',
+    condition:['RISKREGISTER.riskcategoryid','=','RISKCATEGORYTABLE.riskcategoryid'],
+   jointype:'LEFT'
+  }
+  ,{
+    table:'VULNERABILITYGROUPTABLE',
+    condition:['RISKREGISTER.Vulnerabilitygroupid','=','VULNERABILITYGROUPTABLE.Vulnerabilitygroupid'],
+   jointype:'LEFT'
+  }
+  ,{
+    table:'VULNERABILITYNAME',
+    condition:['RISKREGISTER.Vulnerabilitynameid','=','VULNERABILITYNAME.VulnerabilityNameid'],
+   jointype:'LEFT'
+  }
+  ,{
+    table:'THREATTABLE',
+    condition:['RISKREGISTER.Threatnameid','=','THREATTABLE.Threatnameid'],
+   jointype:'LEFT'
+  }
+  ,{
+    table:'Department',
+    condition:['RISKREGISTER.departmentid','=','Department.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['RISKREGISTER.riskid']=id;
+  where_apr['RISKREGISTER.status'] =1;
+  var columns_apr = [ 'RISKREGISTER.riskid', 'RISKREGISTER.riskcategoryid', 'RISKREGISTER.Vulnerabilitygroupid', 'RISKREGISTER.VulnerabilityNameid', 'RISKREGISTER.Vulnerabilityscore', 'RISKREGISTER.Threatnameid', 'RISKREGISTER.Threatscore', 'RISKREGISTER.departmentid', 'RISKREGISTER.Likelihoodscore', 'RISKREGISTER.inheritriskscore', 'RISKREGISTER.riskowneremail', 'RISKREGISTER.riskstatus', 'RISKREGISTER.riskassessmentdate', 'RISKREGISTER.riskassessedby', 'RISKREGISTER.Mvulnerabilityscore', 'RISKREGISTER.mthreatscore', 'RISKREGISTER.mlikelihoodscore', 'RISKREGISTER.residualriskscore','RISKCATEGORYTABLE.categoryname','VULNERABILITYGROUPTABLE.VulnerabilitygroupName','VULNERABILITYNAME.VulnerabilityName','THREATTABLE.ThreatName','Department.departmentname'];
+  var orderby_apr = ''
+  var approver_mapping =  await apiModel.get_joins_records('RISKREGISTER', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+addapplicablecontrol: async function(req,res){   
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var controlid=req.body.data.controlid===undefined ? NULL : req.body.data.controlid;
+  var subcontrolid=req.body.data.subcontrolid===undefined ? NULL : req.body.data.subcontrolid;
+  var Details=req.body.data.Details===undefined ? NULL : req.body.data.Details;
+  var addedon=req.body.data.addedon===undefined ? NULL : req.body.data.addedon;
+  var addedby=req.body.data.addedby===undefined ? NULL : req.body.data.addedby;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  let updatedData = {
+    riskid : riskid,
+    controlid:controlid,
+    subcontrolid:subcontrolid,
+    Details:Details,
+    addedon:addedon,
+    addedby:addedby,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('RISKCONTROLMAPPING', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+}, 
+applicablecontrollist:async function(req,res){ 
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var finalData = {};
+  var where = {};
+  where['RISKCONTROLMAPPING.status'] = '1';
+  where['riskid'] = riskid;
+  var joins_apr = [{
+    table:'control',
+    condition:['RISKCONTROLMAPPING.controlid','=','control.id'],
+   jointype:'LEFT'
+  },
+  {
+    table:'subcontrol',
+    condition:['RISKCONTROLMAPPING.subcontrolid','=','subcontrol.id'],
+   jointype:'LEFT'
+  }
+]
+  var orderby = 'RISKCONTROLMAPPING.id ASC';
+  var columns = ['RISKCONTROLMAPPING.riskid', 'RISKCONTROLMAPPING.controlid', 'RISKCONTROLMAPPING.subcontrolid', 'RISKCONTROLMAPPING.Details','RISKCONTROLMAPPING.status','control.name as controlname','subcontrol.name as subcontrolname'];
+  var control_list =  await apiModel.get_joins_records('RISKCONTROLMAPPING', columns, joins_apr, where, orderby, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: control_list});
+}, 
+addmitigation: async function(req,res){   
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var itigationtaskname=req.body.data.itigationtaskname===undefined ? NULL : req.body.data.itigationtaskname;
+  var targetdate=req.body.data.targetdate===undefined ? NULL : req.body.data.targetdate;
+  var assignedto=req.body.data.assignedto===undefined ? NULL : req.body.data.assignedto;
+  var addedon=req.body.data.addedon===undefined ? NULL : req.body.data.addedon;
+  var addedby=req.body.data.addedby===undefined ? NULL : req.body.data.addedby;
+  var taskdetails = req.body.data.taskdetails===undefined ? NULL : req.body.data.taskdetails;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  let updatedData = {
+    riskid : riskid,
+    itigationtaskname:itigationtaskname,
+    targetdate:targetdate,
+    assignedto:assignedto,
+    taskdetails:taskdetails,
+    addedon:addedon,
+    addedby:addedby,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('RISKMITIGATIONMAPPING', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+}, 
+mitigationlist:async function(req,res){ 
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var finalData = {};
+  var where = {};
+  where['RISKMITIGATIONMAPPING.status'] = '1';
+  where['riskid'] = riskid;
+  var joins_apr = ''
+  var orderby = 'RISKMITIGATIONMAPPING.id ASC';
+  var columns = ['id','RISKMITIGATIONMAPPING.riskid', 'RISKMITIGATIONMAPPING.itigationtaskname', 'RISKMITIGATIONMAPPING.targetdate', 'RISKMITIGATIONMAPPING.assignedto', 'RISKMITIGATIONMAPPING.taskdetails', 'RISKMITIGATIONMAPPING.addedon', 'RISKMITIGATIONMAPPING.addedby', 'RISKMITIGATIONMAPPING.status'];
+  var control_list =  await apiModel.get_joins_records('RISKMITIGATIONMAPPING', columns, joins_apr, where, orderby, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: control_list});
+}, 
+addriskassistments: async function(req,res){   
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
+  var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+  var VulnerabilityNameid=req.body.data.VulnerabilityNameid===undefined ? NULL : req.body.data.VulnerabilityNameid;
+ // var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
+  var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
+  var Mvulnerabilityscore = req.body.data.Mvulnerabilityscore===undefined ? NULL : req.body.data.Mvulnerabilityscore;
+  var mthreatscore=req.body.data.mthreatscore===undefined ? NULL : req.body.data.mthreatscore;
+  var mlikelihoodscore=req.body.data.mlikelihoodscore===undefined ? NULL : req.body.data.mlikelihoodscore;
+  let updatedData = {
+    riskid : riskid,
+    riskcategoryid:riskcategoryid,
+    Vulnerabilitygroupid:Vulnerabilitygroupid,
+    VulnerabilityNameid:VulnerabilityNameid,
+    Threatnameid:Threatnameid,
+    Mvulnerabilityscore:Mvulnerabilityscore,
+    mthreatscore:mthreatscore,
+    mlikelihoodscore:mlikelihoodscore,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['riskid'];
+  let checkId = await masters.getSingleRecord('RISKREGISTER',column, {riskid:riskid}); 
+  if(checkId){
+    let update = await masters.common_update('RISKREGISTER', updatedData, {riskid:riskid});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data updated successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+  var ins = await masters.common_insert('RISKREGISTER', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  }
+} 
+}   
 };
