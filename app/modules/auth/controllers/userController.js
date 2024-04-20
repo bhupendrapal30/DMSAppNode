@@ -3131,8 +3131,8 @@ inheritriskupdate: async function(req,res){
   var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
   var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
   var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
-  var VulnerabilityNameid=req.body.data.VulnerabilityNameid===undefined ? NULL : req.body.data.VulnerabilityNameid;
-  //var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
+  var Vulnerabilitynameid=req.body.data.Vulnerabilitynameid===undefined ? NULL : req.body.data.Vulnerabilitynameid;
+  var AssetsScore=req.body.data.Assetscore===undefined ? NULL : req.body.data.Assetscore;
   var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
   var Threatscore = req.body.data.Threatscore===undefined ? NULL : req.body.data.Threatscore;
   var Likelihoodscore=req.body.data.Likelihoodscore===undefined ? NULL : req.body.data.Likelihoodscore;
@@ -3141,8 +3141,9 @@ inheritriskupdate: async function(req,res){
    // riskid : riskid,
     riskcategoryid:riskcategoryid,
     Vulnerabilitygroupid:Vulnerabilitygroupid,
-    VulnerabilityNameid:VulnerabilityNameid,
+    Vulnerabilitynameid:Vulnerabilitynameid,
     Threatnameid:Threatnameid,
+    Assetscore:AssetsScore,
     //Threatdesciption:Threatdesciption,
     Threatscore:Threatscore,
     Likelihoodscore:Likelihoodscore,
