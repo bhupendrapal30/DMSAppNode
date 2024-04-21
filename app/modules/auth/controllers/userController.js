@@ -3211,7 +3211,6 @@ addapplicablecontrol: async function(req,res){
   var controlid=req.body.data.controlid===undefined ? NULL : req.body.data.controlid;
   var subcontrolid=req.body.data.subcontrolid===undefined ? NULL : req.body.data.subcontrolid;
   var Details=req.body.data.Details===undefined ? NULL : req.body.data.Details;
-  var addedon=req.body.data.addedon===undefined ? NULL : req.body.data.addedon;
   var addedby=req.body.data.addedby===undefined ? NULL : req.body.data.addedby;
   var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
   let updatedData = {
@@ -3219,7 +3218,6 @@ addapplicablecontrol: async function(req,res){
     controlid:controlid,
     subcontrolid:subcontrolid,
     Details:Details,
-    addedon:addedon,
     addedby:addedby,
     createdby:createdby,
     createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
