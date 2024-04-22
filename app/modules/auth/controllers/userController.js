@@ -3258,7 +3258,7 @@ addmitigation: async function(req,res){
   var itigationtaskname=req.body.data.itigationtaskname===undefined ? NULL : req.body.data.itigationtaskname;
   var targetdate=req.body.data.targetdate===undefined ? NULL : req.body.data.targetdate;
   var assignedto=req.body.data.assignedto===undefined ? NULL : req.body.data.assignedto;
-  var addedon=req.body.data.addedon===undefined ? NULL : req.body.data.addedon;
+  //var addedon=req.body.data.addedon===undefined ? NULL : req.body.data.addedon;
   var addedby=req.body.data.addedby===undefined ? NULL : req.body.data.addedby;
   var taskdetails = req.body.data.taskdetails===undefined ? NULL : req.body.data.taskdetails;
   var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
@@ -3268,7 +3268,6 @@ addmitigation: async function(req,res){
     targetdate:targetdate,
     assignedto:assignedto,
     taskdetails:taskdetails,
-    addedon:addedon,
     addedby:addedby,
     createdby:createdby,
     createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
