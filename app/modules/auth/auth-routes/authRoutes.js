@@ -184,4 +184,8 @@ router.post('/applicablecontrollist',authMiddleware.checkToken,userController.ap
 router.post('/addmitigation',authMiddleware.checkToken,userController.addmitigation);
 router.post('/mitigationlist',authMiddleware.checkToken,userController.mitigationlist);
 router.post('/addriskassistments',authMiddleware.checkToken,userController.addriskassistments);
+router.post('/updateriskregister',authMiddleware.checkToken,userController.updateriskregister);
+router.post('/deletemitigation',authMiddleware.checkToken,userController.deletemitigation);
+router.post('/deletriskcontrol',authMiddleware.checkToken,userController.deletriskcontrol);
+
 module.exports = router;

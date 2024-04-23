@@ -3331,5 +3331,86 @@ addriskassistments: async function(req,res){
     return res.status(400).json({ status: false, message: ' details not found'});
   }
 } 
-}   
+},
+updateriskregister:async function(req,res){
+  var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
+  var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
+  var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
+  var Vulnerabilitynameid=req.body.data.Vulnerabilitynameid===undefined ? NULL : req.body.data.Vulnerabilitynameid;
+  var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
+  var departmentid=req.body.data.departmentid===undefined ? NULL : req.body.data.departmentid;
+  var riskowneremail=req.body.data.riskowneremail===undefined ? NULL : req.body.data.riskowneremail;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  let updatedData = {
+    riskcategoryid:riskcategoryid,
+    Vulnerabilitygroupid:Vulnerabilitygroupid,
+    Vulnerabilitynameid:Vulnerabilitynameid,
+    Threatnameid:Threatnameid,
+    departmentid:departmentid,
+    riskowneremail:riskowneremail,
+    updatedby : updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+  var column = ['riskid'];
+  let checkId = await masters.getSingleRecord('RISKREGISTER',column, {riskid:riskid}); 
+  if(checkId){
+    let update = await masters.common_update('RISKREGISTER', updatedData, {riskid:riskid});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data updated successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+  var ins = await masters.common_insert('RISKREGISTER', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  }
+}
+}, 
+deletemitigation: async function(req,res){   
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  let updatedData = {
+    status : 0,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['id'];
+  let checkId = await masters.getSingleRecord('RISKMITIGATIONMAPPING',column, {id:id}); 
+  if(checkId){
+    let update = await masters.common_update('RISKMITIGATIONMAPPING', updatedData, {id:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},  
+deletriskcontrol: async function(req,res){   
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  let updatedData = {
+    status : 0,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['id'];
+  let checkId = await masters.getSingleRecord('RISKCONTROLMAPPING',column, {id:id}); 
+  if(checkId){
+    let update = await masters.common_update('RISKCONTROLMAPPING', updatedData, {id:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},      
 };
