@@ -2470,7 +2470,8 @@ AssetInventorydetails: async function(req,res){
       }
       var ins = await masters.common_insert('RISKREGISTER', insertData);
       if(ins){
-        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,statusCode:200});
+        insertData.riskid =ins;
+        return res.status(200).json({ status: true, message: 'data insert successfully', data:insertData,insertId:ins,statusCode:200});
       } else {
        res.status(422).json({status: false, error: 'Please try Again'}); 
       }
