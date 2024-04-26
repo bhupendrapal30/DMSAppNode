@@ -3298,7 +3298,7 @@ addriskassistments: async function(req,res){
   var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
   var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
   var Vulnerabilitynameid=req.body.data.Vulnerabilitynameid===undefined ? NULL : req.body.data.Vulnerabilitynameid;
-  var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
+  //var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
   var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
   var Mvulnerabilityscore = req.body.data.Mvulnerabilityscore===undefined ? NULL : req.body.data.Mvulnerabilityscore;
   var Massetscore=req.body.data.Massetscore===undefined ? NULL : req.body.data.Massetscore;
