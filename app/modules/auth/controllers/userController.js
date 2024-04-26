@@ -3297,10 +3297,11 @@ addriskassistments: async function(req,res){
   var riskid=req.body.data.riskid===undefined ? NULL : req.body.data.riskid;
   var riskcategoryid=req.body.data.riskcategoryid===undefined ? NULL : req.body.data.riskcategoryid;
   var Vulnerabilitygroupid=req.body.data.Vulnerabilitygroupid===undefined ? NULL : req.body.data.Vulnerabilitygroupid;
-  var VulnerabilityNameid=req.body.data.VulnerabilityNameid===undefined ? NULL : req.body.data.VulnerabilityNameid;
- // var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
+  var Vulnerabilitynameid=req.body.data.Vulnerabilitynameid===undefined ? NULL : req.body.data.Vulnerabilitynameid;
+  var Threatdesciption=req.body.data.Threatdesciption===undefined ? NULL : req.body.data.Threatdesciption;
   var Threatnameid=req.body.data.Threatnameid===undefined ? NULL : req.body.data.Threatnameid;
   var Mvulnerabilityscore = req.body.data.Mvulnerabilityscore===undefined ? NULL : req.body.data.Mvulnerabilityscore;
+  var Massetscore=req.body.data.Massetscore===undefined ? NULL : req.body.data.Massetscore;
   var mthreatscore=req.body.data.mthreatscore===undefined ? NULL : req.body.data.mthreatscore;
   var mlikelihoodscore=req.body.data.mlikelihoodscore===undefined ? NULL : req.body.data.mlikelihoodscore;
   let updatedData = {
@@ -3311,6 +3312,7 @@ addriskassistments: async function(req,res){
     Threatnameid:Threatnameid,
     Mvulnerabilityscore:Mvulnerabilityscore,
     mthreatscore:mthreatscore,
+    Massetscore:Massetscore,
     mlikelihoodscore:mlikelihoodscore,
     updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }
