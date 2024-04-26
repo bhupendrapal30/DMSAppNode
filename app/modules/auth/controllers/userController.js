@@ -3308,7 +3308,7 @@ addriskassistments: async function(req,res){
     riskid : riskid,
     riskcategoryid:riskcategoryid,
     Vulnerabilitygroupid:Vulnerabilitygroupid,
-    VulnerabilityNameid:VulnerabilityNameid,
+    Vulnerabilitynameid:Vulnerabilitynameid,
     Threatnameid:Threatnameid,
     Mvulnerabilityscore:Mvulnerabilityscore,
     mthreatscore:mthreatscore,
