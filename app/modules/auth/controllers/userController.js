@@ -3454,7 +3454,7 @@ soalist: async function(req,res){
   //where_apr['AssetInventory.approverid']=id;
   where_apr['SOA.status'] =1;
   //where_apr['policy_approver_mapping.approverstatus'] =1;
-  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate'];
+  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate','framework.name'];
   var orderby_apr = 'SOA.createddate DESC'
   var approver_mapping =  await apiModel.get_joins_records('SOA', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
   return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
@@ -3473,7 +3473,7 @@ soadetails: async function(req,res){
   where_apr['soa.soaid']=id;
   where_apr['SOA.status'] =1;
   //where_apr['policy_approver_mapping.approverstatus'] =1;
-  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate'];
+  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate','framework.name'];
   var orderby_apr = 'SOA.createddate DESC'
   var approver_mapping =  await apiModel.get_joins_records('SOA', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
   return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
@@ -3508,5 +3508,92 @@ soaupdate: async function(req,res){
     return res.status(400).json({ status: false, message: ' details not found'});
 } 
 
-},          
+}, 
+SoaDetailsAnnexlist: async function(req,res){
+  var soaid=req.body.data.soaid===undefined ? NULL : req.body.data.soaid;
+  var joins_apr = [
+    {
+    table:'framework',
+    condition:['SoaDetailsAnnex.standardid','=','framework.id'],
+   jointype:'LEFT'
+  },
+  {
+    table:'control',
+    condition:['SoaDetailsAnnex.controlid','=','control.id'],
+   jointype:'LEFT'
+  },
+  {
+    table:'subcontrol',
+    condition:['SoaDetailsAnnex.subcontrolid','=','subcontrol.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['SoaDetailsAnnex.soaid']=soaid;
+  where_apr['SoaDetailsAnnex.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['SoaDetailsAnnex.soadetailannexid', 'SoaDetailsAnnex.soaid', 'SoaDetailsAnnex.standardid', 'SoaDetailsAnnex.controlid', 'SoaDetailsAnnex.subcontrolid', 'SoaDetailsAnnex.applicability','framework.name','control.name','subcontrol.name as subcontrolname'];
+  var orderby_apr = 'SoaDetailsAnnex.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('SoaDetailsAnnex', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+SoaDetailsAnnexdetails: async function(req,res){
+  var soaid=req.body.data.soaid===undefined ? NULL : req.body.data.soaid;
+  var soadetailannexid=req.body.data.soadetailannexid===undefined ? NULL : req.body.data.soadetailannexid;
+  var joins_apr = [
+    {
+    table:'framework',
+    condition:['SoaDetailsAnnex.standardid','=','framework.id'],
+   jointype:'LEFT'
+  },
+  {
+    table:'control',
+    condition:['SoaDetailsAnnex.controlid','=','control.id'],
+   jointype:'LEFT'
+  },
+  {
+    table:'subcontrol',
+    condition:['SoaDetailsAnnex.subcontrolid','=','subcontrol.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['SoaDetailsAnnex.soaid']=soaid;
+  where_apr['SoaDetailsAnnex.status'] =1;
+  where_apr['SoaDetailsAnnex.soadetailannexid'] = soadetailannexid;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['SoaDetailsAnnex.soadetailannexid', 'SoaDetailsAnnex.soaid', 'SoaDetailsAnnex.standardid', 'SoaDetailsAnnex.controlid', 'SoaDetailsAnnex.subcontrolid', 'SoaDetailsAnnex.applicability','framework.name','control.name','subcontrol.name as subcontrolname'];
+  var orderby_apr = 'SoaDetailsAnnex.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('SoaDetailsAnnex', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},
+SoaDetailsAnnexupdate: async function(req,res){   
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var applicability=req.body.data.applicability===undefined ? NULL : req.body.data.applicability;
+  var Reason=req.body.data.Reason===undefined ? NULL : req.body.data.Reason;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  let updatedData = {
+    applicability:applicability,
+    Reason:Reason,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['soadetailannexid'];
+  let checkId = await masters.getSingleRecord('SoaDetailsAnnex',column, {soadetailannexid:id}); 
+  if(checkId){
+    let update = await masters.common_update('SoaDetailsAnnex', updatedData, {soadetailannexid:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},              
 };

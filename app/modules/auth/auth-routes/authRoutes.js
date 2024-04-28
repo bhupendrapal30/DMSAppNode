@@ -187,8 +187,11 @@ router.post('/addriskassistments',authMiddleware.checkToken,userController.addri
 router.post('/updateriskregister',authMiddleware.checkToken,userController.updateriskregister);
 router.post('/deletemitigation',authMiddleware.checkToken,userController.deletemitigation);
 router.post('/deletriskcontrol',authMiddleware.checkToken,userController.deletriskcontrol);
-router.post('/addsoa',userController.addsoa);
-router.get('/soalist',userController.soalist);
-router.post('/soadetails',userController.soadetails);
-router.post('/soaupdate',userController.soaupdate);
+router.post('/addsoa',authMiddleware.checkToken,userController.addsoa);
+router.get('/soalist',authMiddleware.checkToken,userController.soalist);
+router.post('/soadetails',authMiddleware.checkToken,userController.soadetails);
+router.post('/soaupdate',authMiddleware.checkToken,userController.soaupdate);
+router.post('/SoaDetailsAnnexlist',authMiddleware.checkToken,userController.SoaDetailsAnnexlist);
+router.post('/SoaDetailsAnnexdetails',authMiddleware.checkToken,userController.SoaDetailsAnnexdetails);
+router.post('/SoaDetailsAnnexupdate',authMiddleware.checkToken,userController.SoaDetailsAnnexupdate);
 module.exports = router;
