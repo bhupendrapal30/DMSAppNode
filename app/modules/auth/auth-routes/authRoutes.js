@@ -187,5 +187,8 @@ router.post('/addriskassistments',authMiddleware.checkToken,userController.addri
 router.post('/updateriskregister',authMiddleware.checkToken,userController.updateriskregister);
 router.post('/deletemitigation',authMiddleware.checkToken,userController.deletemitigation);
 router.post('/deletriskcontrol',authMiddleware.checkToken,userController.deletriskcontrol);
-
+router.post('/addsoa',userController.addsoa);
+router.get('/soalist',userController.soalist);
+router.post('/soadetails',userController.soadetails);
+router.post('/soaupdate',userController.soaupdate);
 module.exports = router;

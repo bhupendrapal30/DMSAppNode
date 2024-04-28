@@ -3415,5 +3415,98 @@ deletriskcontrol: async function(req,res){
     return res.status(400).json({ status: false, message: ' details not found'});
 } 
 
-},      
+}, 
+addsoa: async function(req,res){   
+  var soaversion=req.body.data.soaversion===undefined ? NULL : req.body.data.soaversion;
+  var standardid=req.body.data.standardid===undefined ? NULL : req.body.data.standardid;
+  var soadate=req.body.data.soadate===undefined ? NULL : req.body.data.soadate;
+  var Soascopeperiodstartdate=req.body.data.Soascopeperiodstartdate===undefined ? NULL : req.body.data.Soascopeperiodstartdate;
+  var soascopeperiodenddate=req.body.data.soascopeperiodenddate===undefined ? NULL : req.body.data.soascopeperiodenddate;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  let updatedData = {
+    soaversion : soaversion,
+    standardid:standardid,
+    soadate:soadate,
+    Soascopeperiodstartdate:Soascopeperiodstartdate,
+    soascopeperiodenddate:soascopeperiodenddate,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('SOA', updatedData);
+  if(ins){
+    return res.status(200).json({ status: false, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+},
+soalist: async function(req,res){
+  var joins_apr = [{
+    table:'framework',
+    condition:['SOA.standardid','=','framework.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  //where_apr['AssetInventory.approverid']=id;
+  where_apr['SOA.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate'];
+  var orderby_apr = 'SOA.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('SOA', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+soadetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var joins_apr = [{
+    table:'framework',
+    condition:['SOA.standardid','=','framework.id'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['soa.soaid']=id;
+  where_apr['SOA.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['SOA.soaid', 'SOA.soaversion', 'SOA.standardid', 'SOA.soadate', 'SOA.status', 'SOA.Soascopeperiodstartdate', 'SOA.soascopeperiodenddate'];
+  var orderby_apr = 'SOA.createddate DESC'
+  var approver_mapping =  await apiModel.get_joins_records('SOA', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},
+soaupdate: async function(req,res){   
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  var soaversion=req.body.data.soaversion===undefined ? NULL : req.body.data.soaversion;
+  var standardid=req.body.data.standardid===undefined ? NULL : req.body.data.standardid;
+  var soadate=req.body.data.soadate===undefined ? NULL : req.body.data.soadate;
+  var Soascopeperiodstartdate=req.body.data.Soascopeperiodstartdate===undefined ? NULL : req.body.data.Soascopeperiodstartdate;
+  var soascopeperiodenddate=req.body.data.soascopeperiodenddate===undefined ? NULL : req.body.data.soascopeperiodenddate;
+  let updatedData = {
+    soaversion : soaversion,
+    standardid:standardid,
+    soadate:soadate,
+    Soascopeperiodstartdate:Soascopeperiodstartdate,
+    soascopeperiodenddate:soascopeperiodenddate,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['soaid'];
+  let checkId = await masters.getSingleRecord('SOA',column, {soaid:id}); 
+  if(checkId){
+    let update = await masters.common_update('SOA', updatedData, {soaid:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},          
 };
