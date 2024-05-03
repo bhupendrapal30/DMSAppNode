@@ -3595,5 +3595,246 @@ SoaDetailsAnnexupdate: async function(req,res){
     return res.status(400).json({ status: false, message: ' details not found'});
 } 
 
-},              
+},
+addvendordetails: async function(req,res){   
+  var vendorname=req.body.data.vendorname===undefined ? NULL : req.body.data.vendorname;
+  var primarycontactname=req.body.data.primarycontactname===undefined ? NULL : req.body.data.primarycontactname;
+  var primarycontactemail=req.body.data.primarycontactemail===undefined ? NULL : req.body.data.primarycontactemail;
+  var onboardingdate=req.body.data.onboardingdate===undefined ? NULL : req.body.data.onboardingdate;
+  var expirydate=req.body.data.expirydate===undefined ? NULL : req.body.data.expirydate;
+  var contract = req.body.data.contract===undefined ? NULL : req.body.data.contract;
+  var relationshipmanageremail=req.body.data.relationshipmanageremail===undefined ? NULL : req.body.data.relationshipmanageremail;
+  var assessoremail=req.body.data.assessoremail===undefined ? NULL : req.body.data.assessoremail;
+  var typeofvendor=req.body.data.typeofvendor===undefined ? NULL : req.body.data.typeofvendor;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  let updatedData = {
+    vendorname : vendorname,
+    primarycontactname:primarycontactname,
+    primarycontactemail:primarycontactemail,
+    onboardingdate:onboardingdate,
+    expirydate:expirydate,
+    contract:contract,
+    relationshipmanageremail:relationshipmanageremail,
+    assessoremail:assessoremail,
+    typeofvendor:typeofvendor,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('VENDORDETAIL', updatedData);
+  if(ins){
+    return res.status(200).json({ status: true, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+}, 
+vendordetailslist: async function(req,res){
+var joins_apr = ''
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['VENDORDETAIL.status'] =1;
+  var columns_apr = ['VENDORDETAIL.vendorname', 'VENDORDETAIL.primarycontactname', 'VENDORDETAIL.primarycontactemail', 'VENDORDETAIL.onboardingdate', 'VENDORDETAIL.expirydate', 'VENDORDETAIL.contract', 'VENDORDETAIL.relationshipmanageremail','VENDORDETAIL.assessoremail','VENDORDETAIL.typeofvendor'];
+  var orderby_apr = 'VENDORDETAIL.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORDETAIL', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+vendordetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+var joins_apr = ''
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['VENDORDETAIL.vendorid']=id;
+  where_apr['VENDORDETAIL.status'] =1;
+  var columns_apr = ['VENDORDETAIL.vendorname', 'VENDORDETAIL.primarycontactname', 'VENDORDETAIL.primarycontactemail', 'VENDORDETAIL.onboardingdate', 'VENDORDETAIL.expirydate', 'VENDORDETAIL.contract', 'VENDORDETAIL.relationshipmanageremail','VENDORDETAIL.assessoremail','VENDORDETAIL.typeofvendor'];
+  var orderby_apr = 'VENDORDETAIL.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORDETAIL', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},
+vendordetailsupdate: async function(req,res){   
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var updatedby=req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  var vendorname=req.body.data.vendorname===undefined ? NULL : req.body.data.vendorname;
+  var primarycontactname=req.body.data.primarycontactname===undefined ? NULL : req.body.data.primarycontactname;
+  var primarycontactemail=req.body.data.primarycontactemail===undefined ? NULL : req.body.data.primarycontactemail;
+  var onboardingdate=req.body.data.onboardingdate===undefined ? NULL : req.body.data.onboardingdate;
+  var expirydate=req.body.data.expirydate===undefined ? NULL : req.body.data.expirydate;
+  var contract = req.body.data.contract===undefined ? NULL : req.body.data.contract;
+  var relationshipmanageremail= req.body.data.relationshipmanageremail	===undefined ? NULL : req.body.data.relationshipmanageremail;
+  var assessoremail = req.body.data.assessoremail===undefined ? NULL : req.body.data.assessoremail;
+  var typeofvendor = req.body.data.typeofvendor===undefined ? NULL : req.body.data.typeofvendor;
+  let updatedData = {
+    vendorname : vendorname,
+    primarycontactname:primarycontactname,
+    primarycontactemail:primarycontactemail,
+    onboardingdate:onboardingdate,
+    expirydate:expirydate,
+    contract:contract,
+    relationshipmanageremail:relationshipmanageremail	,
+    assessoremail:assessoremail,
+    typeofvendor:typeofvendor,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['vendorid'];
+  let checkId = await masters.getSingleRecord('VENDORDETAIL',column, {vendorid:id}); 
+  if(checkId){
+    let update = await masters.common_update('VENDORDETAIL', updatedData, {vendorid:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},
+addvendorperformancerating: async function(req,res){   
+  var vendorid=req.body.data.vendorid===undefined ? NULL : req.body.data.vendorid;
+  var evaluatedby=req.body.data.evaluatedby===undefined ? NULL : req.body.data.evaluatedby;
+  var evaluationdate=req.body.data.evaluationdate===undefined ? NULL : req.body.data.evaluationdate;
+  var tiemlinessofdelivery=req.body.data.tiemlinessofdelivery===undefined ? NULL : req.body.data.tiemlinessofdelivery;
+  var qualityofproduct=req.body.data.qualityofproduct===undefined ? NULL : req.body.data.qualityofproduct;
+  var competitivenessofprice = req.body.data.competitivenessofprice===undefined ? NULL : req.body.data.competitivenessofprice;
+  var qualityofserviceprovided=req.body.data.qualityofserviceprovided===undefined ? NULL : req.body.data.qualityofserviceprovided;
+  var competitivenessofTnCond=req.body.data.competitivenessofTnCond===undefined ? NULL : req.body.data.competitivenessofTnCond;
+  var financialcondition=req.body.data.financialcondition===undefined ? NULL : req.body.data.financialcondition;
+  var reputationofcompany = req.body.data.reputationofcompany===undefined ? NULL : req.body.data.reputationofcompany;
+  var expertiseofsalesperson=req.body.data.expertiseofsalesperson===undefined ? NULL : req.body.data.expertiseofsalesperson;
+  var managementresponse=req.body.data.managementresponse===undefined ? NULL : req.body.data.managementresponse;
+  var complianceprocessresponses=req.body.data.financialcondition===undefined ? NULL : req.body.data.complianceprocessresponses;
+  var comments = req.body.data.comments===undefined? NULL : req.body.data.comments;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  var creditrating = req.body.data.creditrating ===undefined ? NULL : req.body.data.creditrating;
+  let updatedData = {
+    vendorid : vendorid,
+    evaluatedby:evaluatedby,
+    evaluationdate:evaluationdate,
+    tiemlinessofdelivery:tiemlinessofdelivery,
+    qualityofproduct:qualityofproduct,
+    competitivenessofprice:competitivenessofprice,
+    qualityofserviceprovided:qualityofserviceprovided,
+    competitivenessofTnCond:competitivenessofTnCond,
+    financialcondition:financialcondition,
+    reputationofcompany:reputationofcompany,
+    expertiseofsalesperson:expertiseofsalesperson,
+    managementresponse:managementresponse,
+    complianceprocessresponses:complianceprocessresponses,
+    comments:comments,
+    creditrating:creditrating,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('VENDORPERFORMANCERATING', updatedData);
+  if(ins){
+    return res.status(200).json({ status: true, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+}, 
+vendorperformanceratinglist: async function(req,res){
+  var joins_apr = [{
+    table:'VENDORDETAIL',
+    condition:['VENDORPERFORMANCERATING.vendorid','=','VENDORDETAIL.vendorid'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  //where_apr['AssetInventory.approverid']=id;
+  where_apr['VENDORPERFORMANCERATING.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['VENDORPERFORMANCERATING.vendorid', 'VENDORPERFORMANCERATING.evaluatedby', 'VENDORPERFORMANCERATING.evaluationdate', 'VENDORPERFORMANCERATING.tiemlinessofdelivery', 'VENDORPERFORMANCERATING.qualityofproduct', 'VENDORPERFORMANCERATING.competitivenessofprice', 'VENDORPERFORMANCERATING.qualityofserviceprovided','VENDORPERFORMANCERATING.competitivenessofTnCond','VENDORPERFORMANCERATING.creditrating','VENDORPERFORMANCERATING.financialcondition','VENDORPERFORMANCERATING.reputationofcompany','VENDORPERFORMANCERATING.expertiseofsalesperson','VENDORPERFORMANCERATING.managementresponse','VENDORPERFORMANCERATING.complianceprocessresponses','VENDORPERFORMANCERATING.comments','VENDORPERFORMANCERATING.creditrating','VENDORDETAIL.vendorname','VENDORPERFORMANCERATING.status'];
+  var orderby_apr = 'VENDORPERFORMANCERATING.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORPERFORMANCERATING', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+vendorperformanceratingdetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var joins_apr = [{
+    table:'VENDORDETAIL',
+    condition:['VENDORPERFORMANCERATING.vendorid','=','VENDORDETAIL.vendorid'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['VENDORPERFORMANCERATING.vendorPrTid']=id;
+  where_apr['VENDORPERFORMANCERATING.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['VENDORPERFORMANCERATING.vendorid', 'VENDORPERFORMANCERATING.evaluatedby', 'VENDORPERFORMANCERATING.evaluationdate', 'VENDORPERFORMANCERATING.tiemlinessofdelivery', 'VENDORPERFORMANCERATING.qualityofproduct', 'VENDORPERFORMANCERATING.competitivenessofprice', 'VENDORPERFORMANCERATING.qualityofserviceprovided','VENDORPERFORMANCERATING.competitivenessofTnCond','VENDORPERFORMANCERATING.creditrating','VENDORPERFORMANCERATING.financialcondition','VENDORPERFORMANCERATING.reputationofcompany','VENDORPERFORMANCERATING.expertiseofsalesperson','VENDORPERFORMANCERATING.managementresponse','VENDORPERFORMANCERATING.complianceprocessresponses','VENDORPERFORMANCERATING.comments','VENDORPERFORMANCERATING.creditrating','VENDORDETAIL.vendorname','VENDORPERFORMANCERATING.status'];
+  var orderby_apr = 'VENDORPERFORMANCERATING.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORPERFORMANCERATING', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},
+vendorperformanceratingupdate: async function(req,res){  
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id; 
+  var vendorid=req.body.data.vendorid===undefined ? NULL : req.body.data.vendorid;
+  var evaluatedby=req.body.data.evaluatedby===undefined ? NULL : req.body.data.evaluatedby;
+  var evaluationdate=req.body.data.evaluationdate===undefined ? NULL : req.body.data.evaluationdate;
+  var tiemlinessofdelivery=req.body.data.tiemlinessofdelivery===undefined ? NULL : req.body.data.tiemlinessofdelivery;
+  var qualityofproduct=req.body.data.qualityofproduct===undefined ? NULL : req.body.data.qualityofproduct;
+  var competitivenessofprice = req.body.data.competitivenessofprice===undefined ? NULL : req.body.data.competitivenessofprice;
+  var qualityofserviceprovided=req.body.data.qualityofserviceprovided===undefined ? NULL : req.body.data.qualityofserviceprovided;
+  var competitivenessofTnCond=req.body.data.competitivenessofTnCond===undefined ? NULL : req.body.data.competitivenessofTnCond;
+  var financialcondition=req.body.data.financialcondition===undefined ? NULL : req.body.data.financialcondition;
+  var reputationofcompany = req.body.data.reputationofcompany===undefined ? NULL : req.body.data.reputationofcompany;
+  var expertiseofsalesperson=req.body.data.expertiseofsalesperson===undefined ? NULL : req.body.data.expertiseofsalesperson;
+  var managementresponse=req.body.data.managementresponse===undefined ? NULL : req.body.data.managementresponse;
+  var complianceprocessresponses=req.body.data.financialcondition===undefined ? NULL : req.body.data.complianceprocessresponses;
+  var comments = req.body.data.comments===undefined? NULL : req.body.data.comments;
+  var updatedby = req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  var creditrating = req.body.data.creditrating ===undefined ? NULL : req.body.data.creditrating;
+  let updatedData = {
+    vendorid : vendorid,
+    evaluatedby:evaluatedby,
+    evaluationdate:evaluationdate,
+    tiemlinessofdelivery:tiemlinessofdelivery,
+    qualityofproduct:qualityofproduct,
+    competitivenessofprice:competitivenessofprice,
+    qualityofserviceprovided:qualityofserviceprovided,
+    competitivenessofTnCond:competitivenessofTnCond,
+    financialcondition:financialcondition,
+    reputationofcompany:reputationofcompany,
+    expertiseofsalesperson:expertiseofsalesperson,
+    managementresponse:managementresponse,
+    complianceprocessresponses:complianceprocessresponses,
+    comments:comments,
+    creditrating:creditrating,
+    updatedby:updatedby,
+    updateddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+       var column = ['vendorPrTid'];
+  let checkId = await masters.getSingleRecord('VENDORPERFORMANCERATING',column, {vendorPrTid:id}); 
+  if(checkId){
+    let update = await masters.common_update('VENDORPERFORMANCERATING', updatedData, {vendorPrTid:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},
+venderlist:async function(req,res){
+  var finalData = {};
+  var where = {};
+  where['status'] = '1';
+  var orderby = 'vendorid ASC';
+  var columns = ['vendorid as value','vendorname as label'];
+  var response = await masters.get_definecol_bytbl_cond_sorting(columns,'VENDORDETAIL', where, orderby );
+  finalData.data = response; 
+  return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
+
+},
+
 };
