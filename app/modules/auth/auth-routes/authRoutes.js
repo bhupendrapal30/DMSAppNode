@@ -202,5 +202,9 @@ router.post('/addvendorperformancerating',authMiddleware.checkToken,userControll
 router.get('/vendorperformanceratinglist',authMiddleware.checkToken,userController.vendorperformanceratinglist);
 router.post('/vendorperformanceratingdetails',authMiddleware.checkToken,userController.vendorperformanceratingdetails);
 router.post('/vendorperformanceratingupdate',authMiddleware.checkToken,userController.vendorperformanceratingupdate);
-router.get('/venderlist',userController.venderlist);
+router.get('/venderlist',authMiddleware.checkToken,userController.venderlist);
+router.post('/addvendorrisk',authMiddleware.checkToken,userController.addvendorrisk);
+router.get('/vendorrisklist',authMiddleware.checkToken,userController.vendorrisklist);
+router.post('/vendorriskdetails',authMiddleware.checkToken,userController.vendorriskdetails);
+router.post('/vendorriskupdate',authMiddleware.checkToken,userController.vendorriskupdate);
 module.exports = router;

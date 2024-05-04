@@ -3836,5 +3836,178 @@ venderlist:async function(req,res){
   return res.status(200).json({status: true, message: 'list fetched successfully', data: response});
 
 },
+addvendorrisk: async function(req,res){   
+  var vendorid=req.body.data.vendorid===undefined ? NULL : req.body.data.vendorid;
+  var GRC=req.body.data.GRC===undefined ? NULL : req.body.data.GRC;
+  var IAM=req.body.data.IAM===undefined ? NULL : req.body.data.IAM;
+  var HR=req.body.data.HR===undefined ? NULL : req.body.data.HR;
+  var Data=req.body.data.Data===undefined ? NULL : req.body.data.Data;
+  var BCDR = req.body.data.BCDR===undefined ? NULL : req.body.data.BCDR;
+  var physicalenvironment=req.body.data.physicalenvironment===undefined ? NULL : req.body.data.physicalenvironment;
+  var supplier=req.body.data.supplier===undefined ? NULL : req.body.data.supplier;
+  var operations = req.body.data.operations===undefined ? NULL : req.body.data.operations;
+  var communication=req.body.data.communication===undefined ? NULL : req.body.data.communication;
+  var legalcompliance=req.body.data.legalcompliance===undefined ? NULL : req.body.data.legalcompliance;
+  var financialcompliance=req.body.data.financialcompliance===undefined ? NULL : req.body.data.financialcompliance;
+  var ThreatVuln = req.body.data.ThreatVuln===undefined? NULL : req.body.data.ThreatVuln;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  var logging=req.body.data.logging===undefined ? NULL : req.body.data.logging;
+  var policyprocedures=req.body.data.policyprocedures===undefined ? NULL : req.body.data.policyprocedures;
+  var auditassurance = req.body.data.auditassurance===undefined? NULL : req.body.data.auditassurance;
+  var legalcompliance=req.body.data.legalcompliance===undefined ? NULL : req.body.data.legalcompliance;
+  var financialcompliance=req.body.data.financialcompliance===undefined ? NULL : req.body.data.financialcompliance;
+  var ThreatVuln = req.body.data.ThreatVuln===undefined? NULL : req.body.data.ThreatVuln;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  var communication=req.body.data.communication===undefined ? NULL : req.body.data.communication;
+  var assessedriskscore=req.body.data.assessedriskscore===undefined ? NULL : req.body.data.assessedriskscore;
+  var mitigatingriskscore=req.body.data.mitigatingriskscore===undefined ? NULL : req.body.data.mitigatingriskscore;
+  var riskmitigationplan = req.body.data.riskmitigationplan===undefined? NULL : req.body.data.riskmitigationplan;
+  var createdby = req.body.data.createdby===undefined ? NULL : req.body.data.createdby;
+  var assessorcomments = req.body.data.assessorcomments ===undefined ? NULL : req.body.data.assessorcomments;
+  var detailedassessmentsheet = req.body.data.detailedassessmentsheet ===undefined ? NULL : req.body.data.detailedassessmentsheet;
+  var assessmentdate = req.body.data.assessmentdate ===undefined ? NULL : req.body.data.assessmentdate;
 
+  let updatedData = {
+    GRC : GRC,
+    vendorid:vendorid,
+    IAM:IAM,
+    HR:HR,
+    Data:Data,
+    BCDR:BCDR,
+    physicalenvironment:physicalenvironment,
+    operations:operations,
+    supplier:supplier,
+    communication:communication,
+    legalcompliance:legalcompliance,
+    financialcompliance:financialcompliance,
+    ThreatVuln:ThreatVuln,
+    logging:logging,
+    policyprocedures:policyprocedures,
+    auditassurance:auditassurance,
+    assessedriskscore:assessedriskscore,
+    mitigatingriskscore:mitigatingriskscore,
+    riskmitigationplan:riskmitigationplan,
+    assessorcomments:assessorcomments,
+    detailedassessmentsheet:detailedassessmentsheet,
+    assessmentdate:assessmentdate,
+    createdby:createdby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+  var ins = await masters.common_insert('VENDORRISK', updatedData);
+  if(ins){
+    return res.status(200).json({ status: true, message: 'data insert successfully'});
+  } else {
+    return res.status(400).json({ status: false, message: ' details not found'});
+  
+} 
+}, 
+vendorrisklist: async function(req,res){
+  var joins_apr = [{
+    table:'VENDORDETAIL',
+    condition:['VENDORRISK.vendorid','=','VENDORDETAIL.vendorid'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  //where_apr['AssetInventory.approverid']=id;
+  where_apr['VENDORRISK.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['VENDORRISK.vendorid', 'VENDORRISK.GRC', 'VENDORRISK.IAM', 'VENDORRISK.HR', 'VENDORRISK.Data', 'VENDORRISK.BCDR', 'VENDORRISK.physicalenvironment','VENDORRISK.operations','VENDORRISK.supplier','VENDORRISK.communication','VENDORRISK.legalcompliance','VENDORRISK.financialcompliance','VENDORRISK.ThreatVuln','VENDORRISK.logging','VENDORRISK.policyprocedures','VENDORRISK.auditassurance','VENDORRISK.assessedriskscore','VENDORRISK.mitigatingriskscore','VENDORRISK.riskmitigationplan','VENDORRISK.assessorcomments','VENDORRISK.detailedassessmentsheet','VENDORRISK.assessmentdate','VENDORDETAIL.vendorname'];
+  var orderby_apr = 'VENDORRISK.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORRISK', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+}, 
+vendorriskdetails: async function(req,res){
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id;
+  var joins_apr = [{
+    table:'VENDORDETAIL',
+    condition:['VENDORRISK.vendorid','=','VENDORDETAIL.vendorid'],
+   jointype:'LEFT'
+  }
+]
+  var where_apr = {}
+  var extra_whr = {}
+  var limit_arr = {}
+  where_apr['VENDORRISK.vendorriskid']=id;
+  where_apr['VENDORRISK.status'] =1;
+  //where_apr['policy_approver_mapping.approverstatus'] =1;
+  var columns_apr = ['VENDORRISK.vendorid', 'VENDORRISK.GRC', 'VENDORRISK.IAM', 'VENDORRISK.HR', 'VENDORRISK.Data', 'VENDORRISK.BCDR', 'VENDORRISK.physicalenvironment','VENDORRISK.operations','VENDORRISK.supplier','VENDORRISK.communication','VENDORRISK.legalcompliance','VENDORRISK.financialcompliance','VENDORRISK.ThreatVuln','VENDORRISK.logging','VENDORRISK.policyprocedures','VENDORRISK.auditassurance','VENDORRISK.assessedriskscore','VENDORRISK.mitigatingriskscore','VENDORRISK.riskmitigationplan','VENDORRISK.assessorcomments','VENDORRISK.detailedassessmentsheet','VENDORRISK.assessmentdate','VENDORDETAIL.vendorname'];
+  var orderby_apr = 'VENDORRISK.createddate DESC';
+  var approver_mapping =  await apiModel.get_joins_records('VENDORRISK', columns_apr, joins_apr, where_apr, orderby_apr, '', '');
+  return res.status(200).json({status: true, message: ' details fetched successfully', data: approver_mapping});
+},
+vendorriskupdate: async function(req,res){  
+  var id=req.body.data.id===undefined ? NULL : req.body.data.id; 
+  var vendorid=req.body.data.vendorid===undefined ? NULL : req.body.data.vendorid;
+  var GRC=req.body.data.GRC===undefined ? NULL : req.body.data.GRC;
+  var IAM=req.body.data.IAM===undefined ? NULL : req.body.data.IAM;
+  var HR=req.body.data.HR===undefined ? NULL : req.body.data.HR;
+  var Data=req.body.data.Data===undefined ? NULL : req.body.data.Data;
+  var BCDR = req.body.data.BCDR===undefined ? NULL : req.body.data.BCDR;
+  var physicalenvironment=req.body.data.physicalenvironment===undefined ? NULL : req.body.data.physicalenvironment;
+  var supplier=req.body.data.supplier===undefined ? NULL : req.body.data.supplier;
+  var operations = req.body.data.operations===undefined ? NULL : req.body.data.operations;
+  var communication=req.body.data.communication===undefined ? NULL : req.body.data.communication;
+  var legalcompliance=req.body.data.legalcompliance===undefined ? NULL : req.body.data.legalcompliance;
+  var financialcompliance=req.body.data.financialcompliance===undefined ? NULL : req.body.data.financialcompliance;
+  var ThreatVuln = req.body.data.ThreatVuln===undefined? NULL : req.body.data.ThreatVuln;
+  var logging=req.body.data.logging===undefined ? NULL : req.body.data.logging;
+  var policyprocedures=req.body.data.policyprocedures===undefined ? NULL : req.body.data.policyprocedures;
+  var auditassurance = req.body.data.auditassurance===undefined? NULL : req.body.data.auditassurance;
+  var legalcompliance=req.body.data.legalcompliance===undefined ? NULL : req.body.data.legalcompliance;
+  var financialcompliance=req.body.data.financialcompliance===undefined ? NULL : req.body.data.financialcompliance;
+  var ThreatVuln = req.body.data.ThreatVuln===undefined? NULL : req.body.data.ThreatVuln;
+  var communication=req.body.data.communication===undefined ? NULL : req.body.data.communication;
+  var assessedriskscore=req.body.data.assessedriskscore===undefined ? NULL : req.body.data.assessedriskscore;
+  var mitigatingriskscore=req.body.data.mitigatingriskscore===undefined ? NULL : req.body.data.mitigatingriskscore;
+  var riskmitigationplan = req.body.data.riskmitigationplan===undefined? NULL : req.body.data.riskmitigationplan;
+  var updatedby = req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
+  var assessorcomments = req.body.data.assessorcomments ===undefined ? NULL : req.body.data.assessorcomments;
+  var detailedassessmentsheet = req.body.data.detailedassessmentsheet ===undefined ? NULL : req.body.data.detailedassessmentsheet;
+  var assessmentdate = req.body.data.assessmentdate ===undefined ? NULL : req.body.data.assessmentdate;
+
+  let updatedData = {
+    GRC : GRC,
+    vendorid:vendorid,
+    IAM:IAM,
+    HR:HR,
+    Data:Data,
+    BCDR:BCDR,
+    physicalenvironment:physicalenvironment,
+    operations:operations,
+    supplier:supplier,
+    communication:communication,
+    legalcompliance:legalcompliance,
+    financialcompliance:financialcompliance,
+    ThreatVuln:ThreatVuln,
+    logging:logging,
+    policyprocedures:policyprocedures,
+    auditassurance:auditassurance,
+    assessedriskscore:assessedriskscore,
+    mitigatingriskscore:mitigatingriskscore,
+    riskmitigationplan:riskmitigationplan,
+    assessorcomments:assessorcomments,
+    detailedassessmentsheet:detailedassessmentsheet,
+    assessmentdate:assessmentdate,
+    updatedby:updatedby,
+    createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  }
+     
+       var column = ['vendorriskid'];
+  let checkId = await masters.getSingleRecord('VENDORRISK',column, {vendorriskid:id}); 
+  if(checkId){
+    let update = await masters.common_update('VENDORRISK', updatedData, {vendorriskid:id});
+     if(update){   
+      return res.status(200).json({ status: true, message: 'data get successfully', data:updatedData,statusCode:200});
+     } else {
+       return res.status(400).json({ status: false, message: 'data not updated'});
+     }
+ }else{
+    return res.status(400).json({ status: false, message: ' details not found'});
+} 
+
+},
 };
