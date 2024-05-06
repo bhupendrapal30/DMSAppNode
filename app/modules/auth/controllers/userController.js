@@ -1008,8 +1008,9 @@ module.exports = {
  delclusewhereData['policyid'] = policyid;
     await masters.common_delete('policycluse_mapping', delclusewhereData);
     cluse.forEach((element, index) =>  {
-     //console.log(`Current index: ${index}`);
-     let clauseid = element.clauseid;
+     console.log(`Current index: ${index}`);
+     let clauseid = element;
+     console.log(clauseid);
      let subclauseid = 1;
      let updateData = {
        policyid : policyid,
@@ -1027,7 +1028,7 @@ module.exports = {
     control.forEach((element, index) =>  {
      //console.log(`Current index: ${index}`);
      //let subcontrolid = element.subcontrolid;
-     let controlid = element.controlid;
+     let controlid = element;
      let updateData = {
        policyid : policyid,
        subcontrolid:1,
