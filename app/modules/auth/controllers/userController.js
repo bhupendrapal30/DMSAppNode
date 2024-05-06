@@ -1280,7 +1280,7 @@ policylist: async function(req,res){
   var where_clause = {}
   where_clause['policycluse_mapping.policyid']=policyid;
   where_clause['policycluse_mapping.status'] =1;
-  var columns_clause = ['policycluse_mapping.clauseid','policycluse_mapping.clauseid as clause_id','policycluse_mapping.subclauseid','clause.clause','sub_clause.sabclause'];
+  var columns_clause = ['policycluse_mapping.clauseid','policycluse_mapping.clauseid as clause_id','policycluse_mapping.subclauseid','clause.clause','clause.ClauseName','sub_clause.sabclause'];
   var orderby_clause= 'policycluse_mapping.createddate DESC'
   var clause_mapping =  await apiModel.get_joins_records('policycluse_mapping', columns_clause, joins_clause, where_clause, orderby_clause, '', '');
   
