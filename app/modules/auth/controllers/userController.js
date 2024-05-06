@@ -858,7 +858,7 @@ module.exports = {
       where['status'] = '1';
       where['frameworkid'] = frameworkid;
       var orderby = 'id ASC';
-      var columns = ['id as value','clause as label'];
+      var columns = ['id as value','ClauseName as label'];
       var response = await masters.get_definecol_bytbl_cond_sorting(columns,'clause', where, orderby );
       finalData.data = response; 
       return res.status(200).json({status: true, message: 'Clause list fetched successfully', data: response});
