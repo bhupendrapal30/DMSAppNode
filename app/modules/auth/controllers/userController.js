@@ -970,8 +970,8 @@ module.exports = {
       var ownerid = req.body.data.ownerid===undefined ? NULL : req.body.data.ownerid;
       var policyrequirements = req.body.data.policyrequirements===undefined ? NULL : req.body.data.policyrequirements;
       var updatedby = req.body.data.updatedby===undefined ? NULL : req.body.data.updatedby;
-      var cluse = req.body.data.cluse===undefined ? NULL : req.body.data.cluse;
-      var control = req.body.data.control===undefined ? NULL : req.body.data.control;
+      var cluse = req.body.data.clauseid===undefined ? NULL : req.body.data.clauseid;
+      var control = req.body.data.controlid===undefined ? NULL : req.body.data.controlid;
       var frameworkid = req.body.data.frameworkid===undefined ? NULL : req.body.data.frameworkid;
       const delapmwhereData = {};
       delapmwhereData['policyid'] = policyid;
