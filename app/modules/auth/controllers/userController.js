@@ -1314,7 +1314,7 @@ policyfileupdate:async function(req,res,next){
        var policyType = req.body.data.policyType;
        var file_version = req.body.data.file_version;
        var description = req.body.data.description;
-      // var optional_description = req.body.optional_description;
+      var optional_description = req.body.optional_description;
      var column = ['id','file_version'];
    let checkId = await masters.getSingleRecord('policy',column, {id:policyid}); 
      if(checkId){
