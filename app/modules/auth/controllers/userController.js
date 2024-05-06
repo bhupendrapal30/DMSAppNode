@@ -1010,11 +1010,11 @@ module.exports = {
     cluse.forEach((element, index) =>  {
      //console.log(`Current index: ${index}`);
      let clauseid = element.clauseid;
-     let subclauseid = element.subclauseid;
+     let subclauseid = 1;
      let updateData = {
        policyid : policyid,
        clauseid:clauseid,
-       subclauseid:subclauseid,
+       subclauseid:1,
        status : 1,
        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
      }
@@ -1026,11 +1026,11 @@ module.exports = {
     await masters.common_delete('policycontral_mapping', delcontrolwhereData);
     control.forEach((element, index) =>  {
      //console.log(`Current index: ${index}`);
-     let subcontrolid = element.subcontrolid;
+     //let subcontrolid = element.subcontrolid;
      let controlid = element.controlid;
      let updateData = {
        policyid : policyid,
-       subcontrolid:subcontrolid,
+       subcontrolid:1,
        controlid:controlid,
        status : 1,
        createddate:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
