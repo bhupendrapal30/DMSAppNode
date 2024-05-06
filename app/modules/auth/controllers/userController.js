@@ -1322,7 +1322,7 @@ policyfileupdate:async function(req,res,next){
         policyType : policyType,
         file_version:file_version,
         description:description, 
-        optional_description:"",
+        optional_description:optional_description,
         filename:filename,
         location:"test"
 
